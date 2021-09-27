@@ -2,7 +2,7 @@ const axios = require('axios');
 
 exports.handler = (events, context, callback) => {
   const query = `
-    mutation updateIdea($id: Int_comparison_exp, $changes: user_set_input) {
+    mutation updateIdea($id: Int_comparison_exp, $changes: idea_set_input) {
       update_idea(where: { id: $id }, _set: $changes) {
         returning {
           id
