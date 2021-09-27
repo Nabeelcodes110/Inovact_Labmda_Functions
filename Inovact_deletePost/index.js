@@ -5,8 +5,8 @@ exports.handler = (events, context, callback) => {
 
   if (id) {
     const query = `
-      mutation delete_post($id: Int!) {
-        delete_post_by_pk(id: $id) {
+      mutation delete_project($id: Int!) {
+        delete_project_by_pk(id: $id) {
           id
         }
       }
