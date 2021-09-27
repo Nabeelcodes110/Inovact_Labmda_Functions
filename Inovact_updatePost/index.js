@@ -1,9 +1,9 @@
 const axios = require('axios');
 
-exports.handler = (event, context, callback) => {
+exports.handler = (events, context, callback) => {
   const query = `
-    mutation updatePost($id: Int_comparison_exp, $changes: user_set_input) {
-      update_post(where: { id: $id }, _set: $changes) {
+    mutation updateProject($id: Int_comparison_exp, $changes: user_set_input) {
+      update_project(where: { id: $id }, _set: $changes) {
         returning {
           id
         }

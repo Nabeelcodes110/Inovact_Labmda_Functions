@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 exports.handler = (events, context, callback) => {
-  const id = event.id;
+  const id = events.id;
 
   if (id) {
     const query = `
