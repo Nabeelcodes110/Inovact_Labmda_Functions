@@ -1,4 +1,4 @@
-const axios = require('axios')
+const axios = require('axios');
 
 exports.handler = (events, context, callback) => {
   const id = event.id;
@@ -13,30 +13,30 @@ exports.handler = (events, context, callback) => {
     `;
 
     const variables = {
-      id
-    }
+      id,
+    };
 
     axios
-    .post(
-      process.env.HASURA_API,
+      .post(
+        process.env.HASURA_API,
 
-      { query, variables },
-      {
-        headers: {
-          "content-type": "application/json",
-          "x-hasura-admin-secret": process.env.HASURA_ADMIN_SECRET,
-        },
-      }
-    )
-    .then((res) => {
-      callback(null, res.data);
-    })
-    .catch((err) => {
-      callback(err);
-    });
+        { query, variables },
+        {
+          headers: {
+            'content-type': 'application/json',
+            'x-hasura-admin-secret': process.env.HASURA_ADMIN_SECRET,
+          },
+        }
+      )
+      .then(res => {
+        callback(null, res.data);
+      })
+      .catch(err => {
+        callback(err);
+      });
   } else {
     callback({
-      message: "Invalid or id not found"
+      message: 'Invalid or id not found',
     });
   }
-}
+};

@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 exports.handler = (events, context, callback) => {
-  const id = events.id
+  const id = events.id;
 
   if (typeof id == 'string') {
     const query = `
@@ -27,31 +27,31 @@ exports.handler = (events, context, callback) => {
 
     const variables = {
       id: {
-        _eq: id
-      }
+        _eq: id,
+      },
     };
 
     axios
       .post(
-          process.env.HASURA_API,
-          { query, variables },
-          {
-              headers: {
-                  "content-type": "application/json",
-                  "x-hasura-admin-secret": process.env.HASURA_ADMIN_SECRET,
-              },
-          }
+        process.env.HASURA_API,
+        { query, variables },
+        {
+          headers: {
+            'content-type': 'application/json',
+            'x-hasura-admin-secret': process.env.HASURA_ADMIN_SECRET,
+          },
+        }
       )
-      .then((res) => {
-          callback(null, res.data);
+      .then(res => {
+        callback(null, res.data);
       })
-      .catch((err) => {
-          callback(err);
+      .catch(err => {
+        callback(err);
       });
   } else {
     callback({
       statusCode: 400,
-      message: "Invalid or missing id"
+      message: 'Invalid or missing id',
     });
   }
-}
+};

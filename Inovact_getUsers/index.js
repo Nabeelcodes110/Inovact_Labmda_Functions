@@ -1,7 +1,7 @@
-const axios = require("axios");
+const axios = require('axios');
 
 exports.handler = (events, context, callback) => {
-    const query = `
+  const query = `
     query getUsers {
       user {
         id,
@@ -22,21 +22,21 @@ exports.handler = (events, context, callback) => {
     }
   `;
 
-    axios
-        .post(
-            process.env.HASURA_API,
-            { query, variables: {} },
-            {
-                headers: {
-                    "content-type": "application/json",
-                    "x-hasura-admin-secret": process.env.HASURA_ADMIN_SECRET,
-                },
-            }
-        )
-        .then((res) => {
-            callback(null, res.data);
-        })
-        .catch((err) => {
-            callback(err);
-        });
+  axios
+    .post(
+      process.env.HASURA_API,
+      { query, variables: {} },
+      {
+        headers: {
+          'content-type': 'application/json',
+          'x-hasura-admin-secret': process.env.HASURA_ADMIN_SECRET,
+        },
+      }
+    )
+    .then(res => {
+      callback(null, res.data);
+    })
+    .catch(err => {
+      callback(err);
+    });
 };

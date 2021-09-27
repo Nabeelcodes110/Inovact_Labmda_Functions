@@ -1,4 +1,4 @@
-const axios = require("axios");
+const axios = require('axios');
 exports.handler = (event, context, callback) => {
   const query = `query getIdea {
   idea {
@@ -16,16 +16,16 @@ exports.handler = (event, context, callback) => {
       { query, variables: {} },
       {
         headers: {
-          "content-type": "application/json",
-          "x-hasura-admin-secret": process.env.HASURA_ADMIN_SECRET,
+          'content-type': 'application/json',
+          'x-hasura-admin-secret': process.env.HASURA_ADMIN_SECRET,
         },
       }
     )
-    .then((res) => {
+    .then(res => {
       console.log(res.data);
       callback(null, res.data);
     })
-    .catch((err) => {
+    .catch(err => {
       console.log(err);
       callback(err);
     });
