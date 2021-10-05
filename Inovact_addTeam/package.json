@@ -1,0 +1,19 @@
+{
+  "name": "inovact_addteam",
+  "version": "1.0.0",
+  "description": "API for creating a team",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "inovact",
+    "create",
+    "team"
+  ],
+  "author": "D G Shivu",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.4"
+  }
+}
