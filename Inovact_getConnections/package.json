@@ -1,0 +1,18 @@
+{
+  "name": "inovact_getconnections",
+  "version": "1.0.0",
+  "description": "lambda function to get user connections",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "inovact",
+    "connections"
+  ],
+  "author": "D G Shivu",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.22.0"
+  }
+}
