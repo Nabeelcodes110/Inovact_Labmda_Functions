@@ -1,0 +1,14 @@
+{
+  "name": "inovact_newconnection",
+  "version": "1.0.0",
+  "description": "API to initiate a connection request",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "D G Shivu",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.22.0"
+  }
+}
