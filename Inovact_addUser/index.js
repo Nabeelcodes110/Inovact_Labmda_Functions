@@ -6,7 +6,7 @@ const ses = new aws.SES();
 exports.handler = (event, context, callback) => {
   if (event.request.userAttributes.email) {
     const email_id = event.request.userAttributes.email;
-    const user_name = email_id;
+    const user_name = event.userName;
     const cognito_sub = event.request.userAttributes.sub;
 
     const query = `

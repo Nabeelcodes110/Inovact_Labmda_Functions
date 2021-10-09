@@ -1,47 +1,35 @@
 const axios = require('axios');
-exports.handler = (event, context, callback) => {
-  const query = `mutation add_idea($caption: String!,$description: String!,$title:String!,$user_id:Int,$url:String!) {
-  insert_idea(objects: [{
-    caption: $caption
-    description: $description
-    user_id: $user_id
-		title:$title
-		url:$url
-  }]) {
-    returning {
-      id
-      created_at
-      updated_at
-    }
-  }
-}`;
+const { query: Hasura } = require('./utils/hasura');
+const { addIdea } = require('./queries/mutations');
+const { getUser } = require('./queries/queries');
 
-  let variables = {
-    caption: event.caption,
-    description: event.description,
-    title: event.title,
-    user_id: event.user_id,
-    url: event.url,
-  };
-  axios
-    .post(
-      process.env.HASURA_API,
+exports.handler = async (events, context, callback) => {
+  // Find user id
+  const cognito_sub = events.cognito_sub;
+  const response1 = await Hasura(getUser, {
+    cognito_sub: { _eq: cognito_sub },
+  });
 
-      { query, variables },
-      {
-        headers: {
-          'content-type': 'application/json',
-          'x-hasura-admin-secret': process.env.HASURA_ADMIN_SECRET,
-        },
+  if (response1.success) {
+    if (response1.result.data.user.length) {
+      const data = {
+        description: events.description,
+        title: events.title,
+        user_id: response1.result.data.user[0].id,
+        url: events.url,
+      };
+
+      const response2 = await Hasura(addIdea, data);
+
+      if (response2.success) {
+        callback(null, response2.result);
+      } else {
+        callback(null, response2.errors);
       }
-    )
-    .then(res => {
-      console.log(res.data);
-      callback(null, res.data);
-    })
-    .catch(err => {
-      console.log(err);
-      callback(err);
-    });
-  // callback(null, event);
+    } else {
+      callback('User not found');
+    }
+  } else {
+    callback(null, response1.errors);
+  }
 };

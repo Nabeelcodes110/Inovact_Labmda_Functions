@@ -1,29 +1,13 @@
 const axios = require('axios');
-exports.handler = (event, context, callback) => {
-  const query = `query getProjects {
-  project {
-    id,    
+const { query: Hasura } = require('./utils/hasura');
+const { getProjects } = require('./queries/queries');
 
+exports.handler = async (event, context, callback) => {
+  const response = await Hasura(getProjects);
+
+  if (response.success) {
+    callback(null, response.result);
+  } else {
+    callback(null, response.errors);
   }
-}`;
-  axios
-    .post(
-      process.env.HASURA_API,
-
-      { query, variables: {} },
-      {
-        headers: {
-          'content-type': 'application/json',
-          'x-hasura-admin-secret': process.env.HASURA_ADMIN_SECRET,
-        },
-      }
-    )
-    .then(res => {
-      console.log(res.data);
-      callback(null, res.data);
-    })
-    .catch(err => {
-      console.log(err);
-      callback(err);
-    });
 };

@@ -2,11 +2,13 @@ const axios = require('axios');
 exports.handler = (event, context, callback) => {
   const query = `query getIdea {
   idea {
-    id,    
-    caption ,
+    id,
     title,
     description,
-    url
+    url,
+    user_id,
+    updated_at,
+    created_at
   }
 }`;
   axios
