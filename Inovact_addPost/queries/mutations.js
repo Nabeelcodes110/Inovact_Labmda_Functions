@@ -1,24 +1,73 @@
-const addPost = `mutation add_project($description: String!, $title:String!, $user_id:Int) {
-  insert_project(objects: [{
-    title:$title
-    description: $description
-    user_id: $user_id
-  }]) {
+const addProject = `mutation add_project($description: String!, $title: String!, $user_id: Int, $status: String) {
+  insert_project(objects: [{title: $title, description: $description, user_id: $user_id, status: $status}]) {
     returning {
-      id,
-      title,
-      description,
-      status,
-      mentions,
-      looking_for_roles,
-      team_id,
-      completed,
-      created_at,
+      id
+      title
+      description
+      project_tags {
+        hashtag {
+          name
+        }
+      }
+      project_likes {
+        user_id
+      }
+      project_comments {
+        id
+        text
+        user_id
+      }
+      project_mentions {
+        user {
+          id
+          user_name
+        }
+      }
+      project_documents {
+        id
+        name
+        url
+        uploaded_at
+      }
+      status
+      team_id
+      completed
+      created_at
       updated_at
+    }
+  }
+}
+`;
+
+const addMentions = `mutation addMentions($objects: [project_mentions_insert_input!]!) {
+  insert_project_mentions(objects: $objects) {
+    returning {
+      project_id
+      user_id
+    }
+  }
+}`;
+
+const addTags = `mutation addTags($objects: [project_tag_insert_input!]!) {
+  insert_project_tag(objects: $objects) {
+    returning {
+      project_id
+      tag_id
+    }
+  }
+}`;
+
+const addDocuments = `mutation addDocuments($objects: [project_documents_insert_input!]!) {
+  insert_project_documents(objects: $objects) {
+    returning {
+      project_id
     }
   }
 }`;
 
 module.exports = {
-  addPost,
+  addProject,
+  addMentions,
+  addTags,
+  addDocuments,
 };
