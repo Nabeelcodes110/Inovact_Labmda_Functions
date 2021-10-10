@@ -1,5 +1,11 @@
-const getTags = `query getTags {
-    hashtag {
+const getTags = `query getTags($_tag: String) {
+    hashtag(
+      where:{
+        name:{
+          _ilike:$_tag
+        }
+      }
+    ) {
       id,
       tag_name,
     }
