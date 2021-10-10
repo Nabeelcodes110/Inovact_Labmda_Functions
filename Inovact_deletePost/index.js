@@ -1,42 +1,24 @@
-const axios = require('axios');
+const axios = require("axios");
+const { query: Hasura } = require("./utils/hasura");
+const { deletequery } = require("./queries/queries");
 
-exports.handler = (events, context, callback) => {
-  const id = events.id;
+exports.handler = async (events, context, callback) => {
+  const id = await events.id;
 
   if (id) {
-    const query = `
-      mutation delete_project($id: Int!) {
-        delete_project_by_pk(id: $id) {
-          id
-        }
-      }
-    `;
-
-    const variables = {
+    const variables = await {
       id,
     };
+    const response = await Hasura(deletequery, variables);
 
-    axios
-      .post(
-        process.env.HASURA_API,
-
-        { query, variables },
-        {
-          headers: {
-            'content-type': 'application/json',
-            'x-hasura-admin-secret': process.env.HASURA_ADMIN_SECRET,
-          },
-        }
-      )
-      .then(res => {
-        callback(null, res.data);
-      })
-      .catch(err => {
-        callback(err);
-      });
+    if (response.success) {
+      callback(null, response.result);
+    } else {
+      callback(null, response.errors);
+    }
   } else {
     callback({
-      message: 'Invalid or id not found',
+      message: "Invalid or id not found",
     });
   }
 };

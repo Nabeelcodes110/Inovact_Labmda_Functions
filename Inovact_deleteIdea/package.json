@@ -1,14 +1,12 @@
 {
-  "name": "inovact_deleteidea",
+  "name": "Inovact_deleteIdea",
   "version": "1.0.0",
-  "description": "Delete idea lambda function",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "D G Shivu",
-  "license": "ISC",
-  "dependencies": {
-    "axios": "^0.21.4"
-  }
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
