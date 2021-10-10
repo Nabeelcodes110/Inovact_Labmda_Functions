@@ -1,16 +1,29 @@
 const axios = require('axios');
 exports.handler = (event, context, callback) => {
   const query = `query getIdea {
-  idea {
-    id,
-    title,
-    description,
-    url,
-    user_id,
-    updated_at,
-    created_at
+    idea {
+      id
+      title
+      description
+      user_id
+      idea_tags {
+        hashtag {
+          name
+        }
+      }
+      idea_likes {
+        user_id
+      }
+      idea_comments {
+        id
+        created_at
+        text
+        updated_at
+        user_id
+      }
+    }
   }
-}`;
+  `;
   axios
     .post(
       process.env.HASURA_API,

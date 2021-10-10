@@ -26,6 +26,32 @@ const getUser = `query getUser($cognito_sub: String_comparison_exp) {
 }
 `;
 
+const getIdea = `query getIdea($id: Int) {
+  idea(where: {id: {_eq: $id}}) {
+    id
+    title
+    description
+    user_id
+    idea_tags {
+      hashtag {
+        name
+      }
+    }
+    idea_likes {
+      user_id
+    }
+    idea_comments {
+      id
+      created_at
+      text
+      updated_at
+      user_id
+    }
+  }
+}
+`;
+
 module.exports = {
   getUser,
+  getIdea,
 };
