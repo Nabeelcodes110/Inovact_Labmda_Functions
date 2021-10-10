@@ -21,6 +21,12 @@ exports.handler = (event, context, callback) => {
         updated_at
         user_id
       }
+      idea_documents {
+        id
+        name
+        url
+        uploaded_at
+      }
     }
   }
   `;
