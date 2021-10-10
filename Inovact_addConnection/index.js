@@ -2,11 +2,11 @@ const { query: Hasura } = require('./utils/hasura');
 const { getUserId, getConnection } = require('./queries/queries');
 const { addConnection } = require('./queries/mutations');
 
-exports.handler = (event, context, callback) => {
+exports.handler = async (event, context, callback) => {
   const user_id = event.user_id;
 
   // Find user id
-  const cognito_sub = events.cognito_sub;
+  const cognito_sub = event.cognito_sub;
   const response1 = await Hasura(getUserId, {
     cognito_sub: { _eq: cognito_sub },
   });
