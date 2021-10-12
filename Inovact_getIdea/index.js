@@ -27,6 +27,8 @@ exports.handler = (event, context, callback) => {
         url
         uploaded_at
       }
+      created_at
+      updated_at
     }
   }
   `;
