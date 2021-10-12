@@ -1,14 +1,15 @@
 {
-  "name": "inovact_updateidea",
+  "name": "Inovact_updateIdea",
   "version": "1.0.0",
-  "description": "Lambda function to update Idea",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "D G Shivu",
+  "keywords": [],
+  "author": "",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.21.4"
+    "axios": "^0.22.0"
   }
 }
