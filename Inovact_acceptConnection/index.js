@@ -1,12 +1,13 @@
 const { query: Hasura } = require('./utils/hasura');
-const { getPendingConnection, acceptConnection } = require('./queries/queries');
+const { getUserId, getPendingConnection } = require('./queries/queries');
+const { acceptConnection } = require('./queries/mutations');
 
 exports.handler = async (events, context, callback) => {
   const user_id = events.user_id;
 
   // Find user id
   const cognito_sub = events.cognito_sub;
-  const response1 = await Hasura(getUser, {
+  const response1 = await Hasura(getUserId, {
     cognito_sub: { _eq: cognito_sub },
   });
 
