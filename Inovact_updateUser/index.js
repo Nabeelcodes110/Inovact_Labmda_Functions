@@ -1,17 +1,8 @@
-const axios = require('axios');
+const { updateUser } = require('./queries/mutations');
+const { query: Hasura } = require('./utils/hasura');
 
-exports.handler = (events, context, callback) => {
+exports.handler = async (events, context, callback) => {
   const cognito_sub = events.cognito_sub;
-
-  const query = `
-    mutation updateUser($cognito_sub: String_comparison_exp, $changes: user_set_input) {
-      update_user(where: { cognito_sub: $cognito_sub }, _set: $changes) {
-        returning {
-          id
-        }
-      }
-    }
-  `;
 
   let variables = {
     cognito_sub: {
@@ -26,7 +17,7 @@ exports.handler = (events, context, callback) => {
   if (events.avatar) variables['changes']['avatar'] = events.avatar;
   if (events.phone_number)
     variables['changes']['phone_number'] = events.phone_number;
-  if (events.role) variables['change']['role'] = events.role;
+  if (events.role) variables['changes']['role'] = events.role;
   if (events.designation)
     variables['changes']['designation'] = events.designation;
   if (events.organization)
@@ -45,21 +36,9 @@ exports.handler = (events, context, callback) => {
   if (events.profile_complete)
     variables['changes']['profile_complete'] = events.profile_complete;
 
-  axios
-    .post(
-      process.env.HASURA_API,
-      { query, variables },
-      {
-        headers: {
-          'content-type': 'application/json',
-          'x-hasura-admin-secret': process.env.HASURA_ADMIN_SECRET,
-        },
-      }
-    )
-    .then(res => {
-      callback(null, res.data);
-    })
-    .catch(err => {
-      callback(err);
-    });
+  const response = await Hasura(updateUser, variables);
+
+  if (!response.success) return callback(null, response.errors);
+
+  callback(null, response.result);
 };
