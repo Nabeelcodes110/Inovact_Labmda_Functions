@@ -1,6 +1,11 @@
 const { query: Hasura } = require('./utils/hasura');
-const { addTeam, addInvitations, addRoles } = require('./queries/mutations');
-const { getUsersFromEmailId } = require('./queries/queries');
+const {
+  addTeam,
+  addInvitations,
+  addRoles,
+  addMembers,
+} = require('./queries/mutations');
+const { getUsersFromEmailId, getUserId } = require('./queries/queries');
 
 const validateMembers = members => {
   for (const member of members) {
@@ -122,6 +127,29 @@ exports.handler = async (event, context, callback) => {
     const response4 = await Hasura(addRoles, roleObjects);
 
     if (!response4.success) return callback(null, response4.errors);
+
+    // Add current user as a member with admin: true
+    // Find user id
+    const cognito_sub = event.cognito_sub;
+    const response5 = await Hasura(getUserId, {
+      cognito_sub: { _eq: cognito_sub },
+    });
+
+    if (!response5.success) return callback(null, response5.errors);
+
+    const memberObjects = {
+      objects: [
+        {
+          user_id: response5.result.data.user[0].id,
+          team_id: team.id,
+          admin: true,
+        },
+      ],
+    };
+
+    const response6 = await Hasura(addMembers, memberObjects);
+
+    if (!response6.success) return callback(null, response6.errors);
 
     callback(null);
 

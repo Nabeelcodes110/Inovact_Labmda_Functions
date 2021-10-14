@@ -31,8 +31,20 @@ const addRoles = `mutation addRoles($objects: [team_role_requirements_insert_inp
 }
 `;
 
+const addMembers = `mutation addMembers($objects: [team_members_insert_input!]!) {
+  insert_team_members(objects: $objects) {
+    returning {
+      user_id
+      team_id
+      admin
+      joined_date
+    }
+  }
+}`;
+
 module.exports = {
   addTeam,
   addInvitations,
   addRoles,
+  addMembers,
 };
