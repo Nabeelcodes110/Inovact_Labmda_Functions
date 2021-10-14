@@ -73,9 +73,9 @@ const getProject = `query getProject($id: Int) {
     updated_at
   }
 }
-`;
+`
 
 module.exports = {
   getProjects,
-  getProject,
+  getProject
 };
