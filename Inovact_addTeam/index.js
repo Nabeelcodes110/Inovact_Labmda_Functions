@@ -1,8 +1,10 @@
-const axios = require('axios');
+const { query: Hasura } = require('./utils/hasura');
+const { addTeam, addInvitations, addRoles } = require('./queries/mutations');
+const { getUsersFromEmailId } = require('./queries/queries');
 
 const validateMembers = members => {
   for (const member of members) {
-    if (typeof member.email != 'string' || typeof member.role != 'string') {
+    if (typeof member.email != 'string' || typeof member.role != 'number') {
       return false;
     }
   }
@@ -19,6 +21,10 @@ exports.handler = async (event, context, callback) => {
     typeof event.description == 'string' && event.description.length != 0
       ? event.description
       : false;
+  const avatar =
+    typeof event.avatar == 'string' && event.avatar.length != 0
+      ? event.avatar
+      : '';
   const looking_for_mentor =
     typeof event.looking_for_mentor == 'boolean'
       ? event.looking_for_mentor
@@ -29,6 +35,7 @@ exports.handler = async (event, context, callback) => {
       : null;
   const tags = event.tags instanceof Array ? event.tags : false;
   const members = event.members instanceof Array ? event.members : false;
+  const roles = event.roles instanceof Array ? event.roles : false;
 
   if (
     name &&
@@ -36,156 +43,92 @@ exports.handler = async (event, context, callback) => {
     typeof looking_for_mentor == 'boolean' &&
     typeof looking_for_members == 'boolean' &&
     tags &&
-    validateMembers(members)
+    validateMembers(members) &&
+    roles
   ) {
-    const query = `
-      mutation addTeam($name: String, $description: String, $looking_for_members: Boolean, $looking_for_mentor: Boolean) {
-        insert_team(objects: [{
-          name: $name,
-          description: $description,
-          looking_for_members: $looking_for_members,
-          looking_for_mentors: $looking_for_mentor
-        }]) {
-          returning {
-            id
-          }
-        }
-      }
-    `;
-    const variables = {
+    // Save team to DB
+    const teamData = {
       name,
       description,
       looking_for_members,
       looking_for_mentor,
+      avatar,
     };
 
-    const res1 = await axios
-      .post(
-        process.env.HASURA_API,
-        { query, variables },
-        {
-          headers: {
-            'content-type': 'application/json',
-            'x-hasura-admin-secret': process.env.HASURA_ADMIN_SECRET,
-          },
-        }
-      )
-      .then(res => {
-        return res.data;
-      })
-      .catch(err => {
-        console.log(err);
-        return false;
-      });
+    const response1 = await Hasura(addTeam, teamData);
 
-    if (res1) {
-      const team = res1.data.insert_team.returning[0];
+    if (!response1.success) callback(null, response1.errors);
 
-      // Query to fetch user ids of givel email ids
-      const query = `
-          query getUsersFromEmailId($emails: [String!]) {
-            user(where: {email_id: {_in: $emails}}) {
-              id
-              email_id
-            }
-          }
-        `;
+    const team = response1.result.data.insert_team.returning[0];
 
-      const variables = {
-        emails: members.map(member => member.email),
-      };
+    // Fetch user ids of existing users
+    const emails = {
+      emails: members.map(member => member.email),
+    };
 
-      const res2 = await axios
-        .post(
-          process.env.HASURA_API,
-          { query, variables },
-          {
-            headers: {
-              'content-type': 'application/json',
-              'x-hasura-admin-secret': process.env.HASURA_ADMIN_SECRET,
-            },
-          }
-        )
-        .then(res => {
-          return res.data;
-        })
-        .catch(err => {
-          console.log(err);
-        });
+    const response2 = await Hasura(getUsersFromEmailId, emails);
 
-      if (res2) {
-        const { user: users } = res2.data;
+    if (!response2.success) callback(null, response2.errors);
 
-        let userIds = [];
-        for (const user of users) {
-          userIds.push(user.id);
-        }
+    // Extract users from response
+    const { user: users } = response2.result.data;
 
-        const sentEmailIds = users.map(user => user.email_id);
-
-        const failedEmailds = members.filter(member => {
-          if (sentEmailIds.indexOf(member.email) == -1) {
-            return true;
-          } else {
-            return false;
-          }
-        });
-
-        // Queyr to add to invitations table
-        const query = `
-            mutation addInvitations($objects: [team_invitations_insert_input!]!) {
-              insert_team_invitations(objects: $objects) {
-                returning {
-                  id
-                }
-              }
-            }
-          `;
-
-        let objects = [];
-
-        for (const user of users) {
-          objects.push({
-            user_id: user.id,
-            team_id: team.id,
-          });
-        }
-
-        const variables = {
-          objects,
-        };
-
-        const res3 = await axios
-          .post(
-            process.env.HASURA_API,
-            { query, variables },
-            {
-              headers: {
-                'content-type': 'application/json',
-                'x-hasura-admin-secret': process.env.HASURA_ADMIN_SECRET,
-              },
-            }
-          )
-          .then(res => {
-            return res.data;
-          })
-          .catch(err => {
-            console.log(err);
-          });
-
-        if (res3) {
-          callback(null, {
-            message: 'Succesfully created team',
-          });
-        } else {
-          callback('Internal Error: Failed to invite members');
-        }
-      } else {
-        callback('Internal Error: Failed to send invitations to team members');
-      }
-    } else {
-      callback('Internal Error: Failed to create a new team');
+    // Extract user ids from users
+    let userIds = [];
+    for (const user of users) {
+      userIds.push(user.id);
     }
+
+    // Emails of existing users
+    const sentEmailIds = users.map(user => user.email_id);
+
+    // Emails of non existing users
+    const failedEmailds = members.filter(member => {
+      if (sentEmailIds.indexOf(member.email) == -1) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+
+    // Invite existing users to team
+    let objects = [];
+
+    for (const user of users) {
+      objects.push({
+        user_id: user.id,
+        team_id: team.id,
+      });
+    }
+
+    const invitations = {
+      objects,
+    };
+
+    const response3 = await Hasura(addInvitations, invitations);
+
+    if (!response3.success) return callback(null, response3.erorrs);
+
+    // Save roles required for the team
+    const roleObjects = {
+      objects: roles.map(role => {
+        return {
+          role_id: role,
+          team_id: team.id,
+        };
+      }),
+    };
+
+    const response4 = await Hasura(addRoles, roleObjects);
+
+    if (!response4.success) return callback(null, response4.errors);
+
+    callback(null);
+
+    // @TODO Handle emails of non existing users
+    // @TODO Send invites over mail using emails of existing users
+    // @TODO What to do with Roles ?
+    // @TODO Save team tags
   } else {
     callback('Bad Request: Invalid or missing required parameters');
   }
