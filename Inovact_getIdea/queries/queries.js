@@ -1,4 +1,4 @@
-  const getIdeas = `query getIdeas {
+const getIdeas = `query getIdeas {
     idea {
       id
       title
@@ -27,12 +27,18 @@
       }
       created_at
       updated_at
+      user {
+        id
+        avatar
+        first_name
+        last_name
+        role
+      }
     }
   }
   `;
-  
 
-   const getIdea = `query getIdea($id: Int) {
+const getIdea = `query getIdea($id: Int) {
     idea (where: { id: { _eq: $id }}) {
       id
       title
@@ -64,9 +70,8 @@
     }
   }
   `;
-  
-  module.exports = {
- getIdea,
- getIdeas
 
+module.exports = {
+  getIdea,
+  getIdeas,
 };

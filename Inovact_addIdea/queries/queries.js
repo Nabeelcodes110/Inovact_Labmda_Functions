@@ -47,6 +47,13 @@ const getIdea = `query getIdea($id: Int) {
       updated_at
       user_id
     }
+    user {
+      id
+      avatar
+      first_name
+      last_name
+      role
+    }
   }
 }
 `;
