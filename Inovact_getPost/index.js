@@ -1,4 +1,3 @@
-const axios = require('axios');
 const { query: Hasura } = require('./utils/hasura');
 const { getProjects, getProject } = require('./queries/queries');
 
