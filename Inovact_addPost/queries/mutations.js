@@ -34,6 +34,13 @@ const addProject = `mutation add_project($description: String!, $title: String!,
       completed
       created_at
       updated_at
+      user {
+        id
+        avatar
+        first_name
+        last_name
+        role
+      }
     }
   }
 }

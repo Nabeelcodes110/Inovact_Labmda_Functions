@@ -33,6 +33,13 @@ const getProjects = `query getProjects {
     completed
     created_at
     updated_at
+    user {
+      id
+      avatar
+      first_name
+      last_name
+      role
+    }
   }
 }`;
 
@@ -71,11 +78,18 @@ const getProject = `query getProject($id: Int) {
     completed
     created_at
     updated_at
+    user {
+      id
+      avatar
+      first_name
+      last_name
+      role
+    }
   }
 }
-`
+`;
 
 module.exports = {
   getProjects,
-  getProject
+  getProject,
 };
