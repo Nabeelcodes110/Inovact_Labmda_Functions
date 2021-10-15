@@ -1,5 +1,5 @@
 const { query: Hasura } = require('./utils/hasura');
-const { getMyTeams, getUserId, getTeam } = require('./queries/queries');
+const { getUserTeams, getUserId, getTeam } = require('./queries/queries');
 
 exports.handler = async (events, context, callback) => {
   const team_id = events.team_id;
@@ -27,7 +27,7 @@ exports.handler = async (events, context, callback) => {
       user_id: response1.result.data.user[0].id,
     };
 
-    const response2 = await Hasura(getMyTeams, variables);
+    const response2 = await Hasura(getUserTeams, variables);
 
     if (!response2.success) return callback(null, response2.errors);
 

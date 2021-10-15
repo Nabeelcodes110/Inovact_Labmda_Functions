@@ -145,7 +145,7 @@ exports.handler = async (event, context, callback) => {
 
     if (!response6.success) return callback(null, response6.errors);
 
-    callback(null);
+    callback(null, { success: true });
 
     // @TODO Handle emails of non existing users
     // @TODO Send invites over mail using emails of existing users
