@@ -22,10 +22,6 @@ exports.handler = async (event, context, callback) => {
     typeof event.name == 'string' && event.name.length != 0
       ? event.name
       : false;
-  const description =
-    typeof event.description == 'string' && event.description.length != 0
-      ? event.description
-      : false;
   const avatar =
     typeof event.avatar == 'string' && event.avatar.length != 0
       ? event.avatar
@@ -44,7 +40,6 @@ exports.handler = async (event, context, callback) => {
 
   if (
     name &&
-    description &&
     typeof looking_for_mentor == 'boolean' &&
     typeof looking_for_members == 'boolean' &&
     tags &&
@@ -54,7 +49,6 @@ exports.handler = async (event, context, callback) => {
     // Save team to DB
     const teamData = {
       name,
-      description,
       looking_for_members,
       looking_for_mentor,
       avatar,
