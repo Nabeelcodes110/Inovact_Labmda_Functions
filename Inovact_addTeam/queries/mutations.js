@@ -41,9 +41,29 @@ const addMembers = `mutation addMembers($objects: [team_members_insert_input!]!)
   }
 }`;
 
+const addTeamTags = `mutation addTeamTags($objects: [team_tag_insert_input!]!) {
+  insert_team_tag(objects: $objects) {
+    returning {
+      team_id
+      tag_id
+    }
+  }
+}`;
+
+const addSkills = `mutation addSkills($objects: [team_skill_requirements_insert_input!]!) {
+  insert_team_skill_requirements(objects: $objects) {
+    returning {
+      id
+    }
+  }
+}
+`;
+
 module.exports = {
   addTeam,
   addInvitations,
   addRoles,
   addMembers,
+  addTeamTags,
+  addSkills,
 };
