@@ -1,4 +1,4 @@
-const getTags = `query getTags($_tag: String) {
+const getTagsWithPrefix = `query getTagsWithPrefix($_tag: String) {
     hashtag(
       where:{
         name:{
@@ -7,10 +7,19 @@ const getTags = `query getTags($_tag: String) {
       }
     ) {
       id,
-      tag_name,
+      name,
     }
   }`;
 
+const getTags = `query getTags {
+  hashtag {
+    id
+    name
+  }
+}
+`;
+
 module.exports = {
   getTags,
+  getTagsWithPrefix,
 };
