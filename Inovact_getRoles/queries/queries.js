@@ -1,4 +1,4 @@
-const getRoles = `query getRoles($_role: String) {
+const getRolesWithPrefix = `query getRoles($_role: String) {
     roles(
       where:{
         name:{
@@ -11,6 +11,14 @@ const getRoles = `query getRoles($_role: String) {
     }
   }`;
 
+const getRoles = `query getRoles {
+  roles {
+    id
+    name
+  }
+}`;
+
 module.exports = {
   getRoles,
+  getRolesWithPrefix,
 };
