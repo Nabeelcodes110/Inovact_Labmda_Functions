@@ -1,4 +1,4 @@
-const getSkills = `query getSkills($_skill: String!) {
+const getSkillsWithPrefix = `query getSkills($_skill: String!) {
     skills(
       where:{
         name:{
@@ -11,6 +11,14 @@ const getSkills = `query getSkills($_skill: String!) {
     }
   }`;
 
+const getSkills = `query getSkills {
+  skills {
+    id
+    name
+  }
+}`;
+
 module.exports = {
   getSkills,
+  getSkillsWithPrefix,
 };
