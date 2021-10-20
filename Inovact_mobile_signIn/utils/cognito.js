@@ -6,13 +6,13 @@ const {
 
 const poolData = {
   UserPoolId: process.env.USER_POOL_ID, // Your user pool id here
-  ClientId: processs.env.CLIENT_ID, // Your client id here
+  ClientId: process.env.CLIENT_ID, // Your client id here
 };
 
 const userPool = new CognitoUserPool(poolData);
 
 const signIn = (email, password) =>
-  Promise((resolve, reject) => {
+  new Promise((resolve, reject) => {
     const authenticationData = {
       Username: email,
       Password: password,
