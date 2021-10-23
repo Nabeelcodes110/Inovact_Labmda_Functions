@@ -1,5 +1,6 @@
 const getUserTeams = `query getMyTeams($user_id: Int) {
   team(where: { team_members: { user_id: { _eq: $user_id }}}) {
+    id
     name
     avatar
     looking_for_members
@@ -54,6 +55,7 @@ const getUserTeams = `query getMyTeams($user_id: Int) {
 
 const getTeam = `query getTeam($team_id: Int) {
   team(where: {id: { _eq: $team_id }}) {
+    id
     name
     avatar
     looking_for_members
