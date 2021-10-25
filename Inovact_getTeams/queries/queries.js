@@ -33,6 +33,7 @@ const getUserTeams = `query getMyTeams($user_id: Int) {
       joined_date
       admin
       user {
+        id
         avatar
         first_name
         last_name
@@ -88,6 +89,7 @@ const getTeam = `query getTeam($team_id: Int) {
       joined_date
       admin
       user {
+        id
         avatar
         first_name
         last_name
