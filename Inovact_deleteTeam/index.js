@@ -25,7 +25,7 @@ exports.handler = async (events, context, callback) => {
 
   // If not
   if (
-    !response2.result.data.team_members.length ||
+    response2.result.data.team_members.length == 0 ||
     !response2.result.data.team_members[0].admin
   )
     return callback('Only team admin can delete the team');
