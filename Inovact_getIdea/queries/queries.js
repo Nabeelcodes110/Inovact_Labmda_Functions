@@ -4,6 +4,7 @@ const getIdeas = `query getIdeas {
       title
       description
       user_id
+      team_id
       idea_tags {
         hashtag {
           name
@@ -44,6 +45,7 @@ const getIdea = `query getIdea($id: Int) {
       title
       description
       user_id
+      team_id
       idea_tags {
         hashtag {
           name

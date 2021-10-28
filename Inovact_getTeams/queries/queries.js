@@ -50,6 +50,10 @@ const getUserTeams = `query getMyTeams($user_id: Int) {
       title
       status
     }
+    ideas {
+      id
+      title
+    }
     team_tags {
       hashtag {
         id
@@ -111,6 +115,10 @@ const getTeam = `query getTeam($team_id: Int) {
     projects {
       title
       status
+    }
+    ideas {
+      id
+      title
     }
     team_tags {
       hashtag {

@@ -49,6 +49,10 @@ const getUserTeams = `query getMyTeams($user_id: Int) {
       title
       status
     }
+    ideas {
+      id
+      title
+    }
     team_tags {
       hashtag {
         id
