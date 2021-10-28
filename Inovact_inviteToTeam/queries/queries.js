@@ -12,7 +12,15 @@ const checkIfAdmin = `query checkIfAdmin($cognito_sub: String, $team_id: Int) {
 }
 `;
 
+const checkIfAlreadyInvited = `query checkIfAlreadyInvited($team_id: Int, $user_id: Int) {
+  team_invitations(where: {team_id: {_eq: $team_id}, user_id: {_eq: $user_id}}) {
+    id
+  }
+}
+`;
+
 module.exports = {
+  checkIfAlreadyInvited,
   checkTeamMember,
   checkIfAdmin,
 };
