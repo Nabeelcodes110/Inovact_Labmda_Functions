@@ -12,6 +12,22 @@ const getUserConnections = `query getMyConnections($user_id: Int_comparison_exp)
     created_at
     formed_at
     status
+    user {
+      id
+      first_name
+      last_name
+      avatar
+      role
+      user_name
+    }
+    userByUser2 {
+      id
+      first_name
+      last_name
+      avatar
+      role
+      user_name
+    }
   }
 }`;
 
