@@ -25,13 +25,17 @@ const signUp = (username, email, password) =>
         if (err) {
           reject({
             success: false,
-            message: err.message,
-            name: err.name,
+            errorMessage: err.name,
+            data: null,
           });
           return;
         }
         resolve({
           success: true,
+          errorMessage: null,
+          data: {
+            user: result.user.username,
+          },
         });
       }
     );
