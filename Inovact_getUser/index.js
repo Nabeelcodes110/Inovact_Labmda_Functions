@@ -31,7 +31,20 @@ exports.handler = (events, context, callback) => {
       role,
       cognito_sub,
       admin,
+      website
       profile_complete
+      user_skills {
+        skill {
+          id
+          name
+        }
+      }
+      user_interests {
+        area_of_interest {
+          id
+          interest
+        }
+      }
       }
     }
   `;
@@ -64,7 +77,20 @@ exports.handler = (events, context, callback) => {
         role,
         cognito_sub,
         admin,
+        website,
         profile_complete
+        user_skills {
+          skill {
+            id
+            name
+          }
+        }
+        user_interests {
+          area_of_interest {
+            id
+            interest
+          }
+        }
         }
       }
     `;

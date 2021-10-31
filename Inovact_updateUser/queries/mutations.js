@@ -21,6 +21,7 @@ const updateUser = `mutation updateUser($cognito_sub: String_comparison_exp, $ch
       role,
       cognito_sub,
       admin,
+      website,
       profile_complete
     }
   }

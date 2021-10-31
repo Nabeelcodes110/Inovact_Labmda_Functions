@@ -35,6 +35,7 @@ exports.handler = async (events, context, callback) => {
   if (events.degree) variables['changes']['degree'] = events.degree;
   if (events.profile_complete)
     variables['changes']['profile_complete'] = events.profile_complete;
+  if (events.website) variables['changes']['website'] = events.website;
 
   const response = await Hasura(updateUser, variables);
 
