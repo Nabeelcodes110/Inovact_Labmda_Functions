@@ -85,6 +85,22 @@ const getProject = `query getProject($id: Int) {
       last_name
       role
     }
+    team {
+      id
+      name
+      avatar
+      looking_for_mentors
+      team_members {
+        user {
+          id
+          first_name
+          last_name
+          user_name
+          role
+          admin
+        }
+      }
+    }
   }
 }
 `;
