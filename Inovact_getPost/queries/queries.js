@@ -40,6 +40,24 @@ const getProjects = `query getProjects {
       last_name
       role
     }
+    team {
+      id
+      name
+      avatar
+      looking_for_mentors
+      looking_for_members
+      team_members {
+        user {
+          id
+          first_name
+          last_name
+          user_name
+          role
+          admin
+          avatar
+        }
+      }
+    }
   }
 }`;
 
@@ -90,6 +108,7 @@ const getProject = `query getProject($id: Int) {
       name
       avatar
       looking_for_mentors
+      looking_for_members
       team_members {
         user {
           id
@@ -98,6 +117,7 @@ const getProject = `query getProject($id: Int) {
           user_name
           role
           admin
+          avatar
         }
       }
     }

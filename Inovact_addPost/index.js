@@ -24,6 +24,7 @@ exports.handler = async (events, context, callback) => {
     title: events.title,
     user_id: response1.result.data.user[0].id,
     status: events.status,
+    team_id: events.team_id,
   };
 
   const response2 = await Hasura(addProject, projectData);
