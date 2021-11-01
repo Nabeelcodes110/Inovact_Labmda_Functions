@@ -23,10 +23,18 @@ const getUserTeams = `query getMyTeams($user_id: Int) {
         id
         first_name
         last_name
+        avatar
+        role
       }
     }
     team_requests {
-      user_id
+      user {
+        id
+        first_name
+        last_name
+        avatar
+        role
+      }
       requested_on
     }
     team_members {
@@ -45,6 +53,7 @@ const getUserTeams = `query getMyTeams($user_id: Int) {
       name
       mime_type
       uploaded_at
+      url
     }
     projects {
       title
@@ -89,10 +98,18 @@ const getTeam = `query getTeam($team_id: Int) {
         id
         first_name
         last_name
+        avatar
+        role
       }
     }
     team_requests {
-      user_id
+      user {
+        id
+        first_name
+        last_name
+        avatar
+        role
+      }
       requested_on
     }
     team_members {
@@ -111,6 +128,7 @@ const getTeam = `query getTeam($team_id: Int) {
       name
       mime_type
       uploaded_at
+      url
     }
     projects {
       title
