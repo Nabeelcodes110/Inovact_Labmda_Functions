@@ -28,6 +28,7 @@ const getUserTeams = `query getMyTeams($user_id: Int) {
       }
     }
     team_requests {
+      id
       user {
         id
         first_name
@@ -104,6 +105,7 @@ const getTeam = `query getTeam($team_id: Int) {
       }
     }
     team_requests {
+      id
       user {
         id
         first_name
