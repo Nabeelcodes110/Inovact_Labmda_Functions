@@ -5,7 +5,13 @@ const getThoughts = `query getThoughts {
       user_id
       
       thought_likes {
-        user_id
+        user {
+          id
+          first_name
+          last_name
+          role
+          avatar
+        }
       }
       thought_comments {
         id
@@ -41,7 +47,13 @@ const getThought = `query getThought($id: Int) {
         user_id
       }
       thought_likes {
-        user_id
+        user {
+          id
+          first_name
+          last_name
+          role
+          avatar
+        }
       }
       created_at
       updated_at

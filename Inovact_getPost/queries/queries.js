@@ -9,7 +9,13 @@ const getProjects = `query getProjects {
       }
     }
     project_likes {
-      user_id
+      user {
+        id
+        first_name
+        last_name
+        role
+        avatar
+      }
     }
     project_comments {
       id
@@ -72,7 +78,13 @@ const getProject = `query getProject($id: Int) {
       }
     }
     project_likes {
-      user_id
+      user {
+        id
+        first_name
+        last_name
+        role
+        avatar
+      }
     }
     project_comments {
       id
