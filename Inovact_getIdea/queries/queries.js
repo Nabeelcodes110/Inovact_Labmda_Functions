@@ -24,7 +24,13 @@ const getIdeas = `query getIdeas {
         created_at
         text
         updated_at
-        user_id
+        user {
+          id
+          avatar
+          first_name
+          last_name
+          role
+        }
       }
       idea_documents {
         id
@@ -71,7 +77,13 @@ const getIdea = `query getIdea($id: Int) {
         created_at
         text
         updated_at
-        user_id
+        user {
+          id
+          avatar
+          first_name
+          last_name
+          role
+        }
       }
       idea_documents {
         id

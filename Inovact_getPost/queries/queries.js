@@ -20,7 +20,15 @@ const getProjects = `query getProjects {
     project_comments {
       id
       text
-      user_id
+      created_at
+      updated_at
+      user {
+        id
+        avatar
+        first_name
+        last_name
+        role
+      }
     }
     project_mentions {
       user {
@@ -89,7 +97,15 @@ const getProject = `query getProject($id: Int) {
     project_comments {
       id
       text
-      user_id
+      created_at
+      updated_at
+      user {
+        id
+        avatar
+        first_name
+        last_name
+        role
+      }
     }
     project_mentions {
       user {
