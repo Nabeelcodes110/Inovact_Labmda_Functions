@@ -56,6 +56,7 @@ const getUserTeams = `query getMyTeams($user_id: Int) {
       url
     }
     projects {
+      id
       title
       status
     }
