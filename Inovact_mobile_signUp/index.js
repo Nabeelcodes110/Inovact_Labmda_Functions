@@ -9,14 +9,12 @@ exports.handler = async (events, context, callback) => {
     return callback(null, {
       success: false,
       errorMessage: 'Failed to check if email exists',
-      data: null,
     });
 
   if (response.result.data.user.length != 0)
     return callback(null, {
       success: false,
       errorMessage: 'EmailExistsException',
-      data: null,
     });
 
   const result = await signUp(

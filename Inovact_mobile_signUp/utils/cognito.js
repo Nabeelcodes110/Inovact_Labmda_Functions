@@ -26,16 +26,12 @@ const signUp = (username, email, password) =>
           reject({
             success: false,
             errorMessage: err.name,
-            data: null,
           });
           return;
         }
         resolve({
           success: true,
-          errorMessage: null,
-          data: {
-            user: result.user.username,
-          },
+          errorMessage: '',
         });
       }
     );
