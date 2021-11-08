@@ -9,7 +9,13 @@ const getUserPosts = `query getProjects($user_id: Int) {
       }
     }
     project_likes {
-      user_id
+      user {
+        id
+        first_name
+        last_name
+        role
+        avatar
+      }
     }
     project_comments {
       id

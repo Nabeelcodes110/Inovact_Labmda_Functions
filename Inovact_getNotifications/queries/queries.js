@@ -14,6 +14,8 @@ const userNotifications = `query getUserNotification($cognito_sub: String, $yest
       user2
     }
     team_invitations {
+      id
+      user_id
       invited_at
       team {
         id

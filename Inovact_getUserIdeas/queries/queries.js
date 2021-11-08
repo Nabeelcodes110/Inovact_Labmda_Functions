@@ -10,7 +10,13 @@ const getUserIdeas = `query getIdeas($user_id: Int) {
       }
     }
     idea_likes {
-      user_id
+      user {
+        id
+        first_name
+        last_name
+        role
+        avatar
+      }
     }
     idea_comments {
       id
