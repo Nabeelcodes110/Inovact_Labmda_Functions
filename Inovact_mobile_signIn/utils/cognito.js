@@ -29,11 +29,20 @@ const signIn = (email, password) =>
 
     cognitoUser.authenticateUser(authenticationDetails, {
       onSuccess: function (result) {
-        resolve(result);
+        resolve({
+          success: true,
+          errorMessage: '',
+          data: {
+            idToken: result.idToken.jwtToken,
+          },
+        });
       },
 
       onFailure: function (err) {
-        reject(err.message || JSON.stringify(err));
+        reject({
+          success: false,
+          errorMessage: 'InvalidCredentialsException',
+        });
       },
     });
   });
