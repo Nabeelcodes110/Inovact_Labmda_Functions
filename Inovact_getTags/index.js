@@ -15,7 +15,7 @@ exports.handler = async (event, context, callback) => {
   }
 
   if (response.success) {
-    callback(null, response.result);
+    callback(null, response.result.data.hashtag);
   } else {
     callback(null, response.errors);
   }

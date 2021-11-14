@@ -14,7 +14,7 @@ exports.handler = async (event, context, callback) => {
   }
 
   if (response.success) {
-    callback(null, response.result);
+    callback(null, response.result.data.skills);
   } else {
     callback(null, response.errors);
   }
