@@ -4,6 +4,11 @@ const {
   CognitoUser,
 } = require('amazon-cognito-identity-js');
 
+const AWS = require('aws-sdk');
+AWS.config.region = process.env.REGION;
+
+const identity = new AWS.CognitoIdentityServiceProvider();
+
 const poolData = {
   UserPoolId: process.env.USER_POOL_ID, // Your user pool id here
   ClientId: process.env.CLIENT_ID, // Your client id here
@@ -39,6 +44,7 @@ const signIn = (email, password) =>
       },
 
       onFailure: function (err) {
+        console.log(err);
         reject({
           success: false,
           errorMessage: 'InvalidCredentialsException',
@@ -47,6 +53,56 @@ const signIn = (email, password) =>
     });
   });
 
+const getCognitoUser = email =>
+  new Promise(async (resolve, reject) => {
+    const userParams = {
+      UserPoolId: process.env.USER_POOL_ID,
+      AttributesToGet: null,
+      Filter: `email = \"${email}\"`,
+      Limit: 1,
+    };
+    try {
+      const { Users } = await identity.listUsers(userParams).promise();
+
+      if (!Users || Users.length == 0) {
+        resolve({
+          hasRegistered: false,
+          hasVerified: false,
+        });
+      } else {
+        const emailVerifiedAttribute = Users[0].Attributes.find(
+          e => e.Name == 'email_verified'
+        );
+
+        if (!emailVerifiedAttribute) {
+          resolve({
+            hasRegistered: false,
+            hasVerified: false,
+          });
+        }
+
+        if (emailVerifiedAttribute.Value == 'true') {
+          resolve({
+            hasRegistered: true,
+            hasVerified: true,
+          });
+        } else {
+          resolve({
+            hasRegistered: true,
+            hasVerified: false,
+          });
+        }
+      }
+    } catch (error) {
+      // console.log({ error }, JSON.stringify(error));
+      reject({
+        hasRegistered: false,
+        hasVerified: false,
+      });
+    }
+  });
+
 module.exports = {
   signIn,
+  getCognitoUser,
 };
