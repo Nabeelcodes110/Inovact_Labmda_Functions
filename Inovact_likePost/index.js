@@ -1,7 +1,7 @@
-const { add_likePost, delete_like } = require("./queries/mutations");
-const { getUserId, getPostId } = require("./queries/queries");
+const { add_likePost, delete_like } = require('./queries/mutations');
+const { getUserId, getPostId } = require('./queries/queries');
 
-const { query: Hasura } = require("./utils/hasura");
+const { query: Hasura } = require('./utils/hasura');
 
 exports.handler = async (events, context, callback) => {
   // Find user id
@@ -10,25 +10,57 @@ exports.handler = async (events, context, callback) => {
     cognito_sub: { _eq: cognito_sub },
   });
 
-  if (!response1.success) return callback(null, response1.errors);
+  if (!response1.success)
+    return callback(null, {
+      success: false,
+      errorCode: 'InternalServerError',
+      errorMessage: 'Failed to find logged in user',
+    });
 
-  const variable = await {
+  const variable = {
     user_id: response1.result.data.user[0].id,
     project_id: events.project_id,
   };
   const response = await Hasura(getPostId, variable);
-  if (!response.success) return callback(null, response.errors);
-  
+  if (!response.success)
+    return callback(null, {
+      success: false,
+      errorCode: 'InternalServerError',
+      errorMessage: 'Failed to find project',
+    });
+
   if (response.result.data.project_like.length == 0) {
     const response2 = await Hasura(add_likePost, variable);
 
     // If failed to insert project return error
-    if (!response2.success) return callback(null, response2.errors);
+    if (!response2.success)
+      return callback(null, {
+        success: false,
+        errorCode: 'InternalServerError',
+        errorMessage: 'Failed to like the post',
+      });
 
-    callback(null, response2.result);
+    callback(null, {
+      success: true,
+      errorCode: '',
+      errorMessage: '',
+      data: 'Added a like',
+    });
   } else {
     const response3 = await Hasura(delete_like, variable);
 
-    callback(null, response3.result);
+    if (!response1.success)
+      return callback(null, {
+        success: false,
+        errorCode: 'InternalServerError',
+        errorMessage: 'Failed to unlike the post',
+      });
+
+    callback(null, {
+      success: true,
+      errorCode: '',
+      errorMessage: '',
+      data: 'Removed a like',
+    });
   }
 };

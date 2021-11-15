@@ -39,7 +39,15 @@ exports.handler = async (events, context, callback) => {
 
   const response = await Hasura(updateUser, variables);
 
-  if (!response.success) return callback(null, response.errors);
+  if (!response.success)
+    return callback(null, {
+      success: false,
+      errorMessage: 'InternalServerError',
+    });
 
-  callback(null, response.result);
+  callback(null, {
+    success: true,
+    errorMessage: '',
+    data: response.result.data.update_user.returning[0],
+  });
 };
