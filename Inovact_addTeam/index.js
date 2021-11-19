@@ -51,6 +51,7 @@ exports.handler = async (event, context, callback) => {
   const tags = event.tags instanceof Array ? event.tags : false;
   const members = event.members instanceof Array ? event.members : false;
   const roles = event.roles instanceof Array ? event.roles : false;
+  const chat_id = typeof event.chat_id == 'string' ? event.chat_id : false;
 
   if (
     name &&
