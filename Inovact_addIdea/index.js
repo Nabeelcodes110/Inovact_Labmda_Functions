@@ -10,8 +10,12 @@ exports.handler = async (events, context, callback) => {
   });
 
   // If failed to find user return error
-  if (!response1.success) callback(null, response1.errors);
-  if (response1.result.data.user.length == 0) callback('User not found');
+  if (!response1.success)
+    callback(null, {
+      success: false,
+      errorCode: 'InternalServerError',
+      errorMessage: 'Failed to find login user',
+    });
 
   const ideaData = {
     description: events.description,
@@ -24,7 +28,12 @@ exports.handler = async (events, context, callback) => {
   const response2 = await Hasura(addIdea, ideaData);
 
   // If failed to insert project return error
-  if (!response2.success) return callback(null, response2.errors);
+  if (!response2.success)
+    return callback(null, {
+      success: false,
+      errorCode: 'InternalServerError',
+      errorMessage: 'Failed to save idea',
+    });
 
   // Insert tags
   if (events.idea_tags.length) {
@@ -67,7 +76,17 @@ exports.handler = async (events, context, callback) => {
 
   const response5 = await Hasura(getIdea, variables);
 
-  if (!response5.success) callback(null, response2.errors);
+  if (!response5.success)
+    callback(null, {
+      success: false,
+      errorCode: 'InternalServerError',
+      errorMessage: 'Saved project successfully but could not retieve it.',
+    });
 
-  callback(null, response2.result);
+  callback(null, {
+    success: true,
+    errorCode: '',
+    errorMessage: '',
+    data: response5.result.data.idea[0],
+  });
 };

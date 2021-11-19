@@ -1,6 +1,6 @@
-const axios = require("axios");
-const { query: Hasura } = require("./utils/hasura");
-const { delete_idea } = require("./queries/queries");
+const axios = require('axios');
+const { query: Hasura } = require('./utils/hasura');
+const { delete_idea } = require('./queries/queries');
 
 exports.handler = async (events, context, callback) => {
   const id = await events.id;
@@ -12,13 +12,21 @@ exports.handler = async (events, context, callback) => {
     const response = await Hasura(delete_idea, variables);
 
     if (response.success) {
-      callback(null, response.result);
+      callback(null, {
+        success: true,
+        errorCode: '',
+        errorMessage: '',
+      });
     } else {
-      callback(null, response.errors);
+      callback(null, {
+        success: false,
+        errorCode: 'InternalServerError',
+        errorMessage: 'Failed to delete thought',
+      });
     }
   } else {
     callback({
-      message: "Invalid or id not found",
+      message: 'Invalid or id not found',
     });
   }
 };

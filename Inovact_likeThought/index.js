@@ -60,7 +60,7 @@ exports.handler = async (events, context, callback) => {
       success: true,
       errorCode: '',
       errorMessage: '',
-      data: 'Added a like',
+      data: 'Removed a like',
     });
   }
 };
