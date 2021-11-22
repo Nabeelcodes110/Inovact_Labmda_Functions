@@ -11,12 +11,14 @@ exports.handler = async (events, context, callback) => {
   if (!hasRegistered) {
     return callback(null, {
       success: false,
-      errorMessage: 'InvalidCredentialsException',
+      errorCode: 'InvalidCredentialsException',
+      errorMessage: 'Provided credentials pair do not match any record in db.',
     });
   } else if (hasRegistered && !hasVerified) {
     return callback(null, {
       success: false,
-      errorMessage: 'EmailNotVerifiedException',
+      errorCode: 'EmailNotVerifiedException',
+      errorMessage: 'User has not verified his email',
     });
   }
 

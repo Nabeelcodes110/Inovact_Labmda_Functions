@@ -47,7 +47,8 @@ const signIn = (email, password) =>
         console.log(err);
         reject({
           success: false,
-          errorMessage: 'InvalidCredentialsException',
+          errorCode: 'InvalidPasswordException',
+          errorMessage: 'Wrong password',
         });
       },
     });

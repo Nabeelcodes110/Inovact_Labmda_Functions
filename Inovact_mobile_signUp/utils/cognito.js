@@ -25,10 +25,8 @@ const signUp = (username, email, password) =>
         if (err) {
           reject({
             success: false,
-            errorMessage:
-              err.message == 'PreSignUp failed with error EmailExistsException.'
-                ? 'EmailExistsException'
-                : err.name,
+            errorCode: err.name,
+            errorMessage: err.message,
           });
           return;
         }

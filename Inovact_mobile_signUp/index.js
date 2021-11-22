@@ -8,13 +8,15 @@ exports.handler = async (events, context, callback) => {
   if (!response.success)
     return callback(null, {
       success: false,
+      errorCode: 'InternalServerError',
       errorMessage: 'Failed to check if email exists',
     });
 
   if (response.result.data.user.length != 0)
     return callback(null, {
       success: false,
-      errorMessage: 'EmailExistsException',
+      errorCode: 'EmailExistsException',
+      errorMessage: 'Account with this email already exists',
     });
 
   const result = await signUp(
