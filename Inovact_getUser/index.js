@@ -1,6 +1,8 @@
-const axios = require('axios');
+const { query: Hasura } = require('./utils/hasura');
+const cleanUserdoc = require('./utils/cleanUserDoc');
+const { getUser, getUserById } = require('./queries/queries');
 
-exports.handler = (events, context, callback) => {
+exports.handler = async (events, context, callback) => {
   const id = events.id;
   const cognito_sub = events.cognito_sub;
 
@@ -8,46 +10,7 @@ exports.handler = (events, context, callback) => {
   let variables;
 
   if (id) {
-    query = `
-    query getUser($id: Int_comparison_exp) {
-      user(where: { id: $id }) {
-        id,
-      user_name,
-      bio,
-      avatar,
-      phone_number,
-      email_id,
-      designation,
-      organization,
-      organizational_role,
-      university,
-      graduation_year,
-      journey_start_date,
-      years_of_professional_experience,
-      created_at,
-      updated_at,
-      first_name,
-      last_name,
-      role,
-      cognito_sub,
-      admin,
-      website
-      profile_complete
-      user_skills {
-        skill {
-          id
-          name
-        }
-      }
-      user_interests {
-        area_of_interest {
-          id
-          interest
-        }
-      }
-      }
-    }
-  `;
+    query = getUserById;
 
     variables = {
       id: {
@@ -55,45 +18,7 @@ exports.handler = (events, context, callback) => {
       },
     };
   } else {
-    query = `query getUser($cognito_sub: String_comparison_exp) {
-        user(where: { cognito_sub: $cognito_sub }) {
-        id,
-        user_name,
-        bio,
-        avatar,
-        phone_number,
-        email_id,
-        designation,
-        organization,
-        organizational_role,
-        university,
-        graduation_year,
-        journey_start_date,
-        years_of_professional_experience,
-        created_at,
-        updated_at,
-        first_name,
-        last_name,
-        role,
-        cognito_sub,
-        admin,
-        website,
-        profile_complete
-        user_skills {
-          skill {
-            id
-            name
-          }
-        }
-        user_interests {
-          area_of_interest {
-            id
-            interest
-          }
-        }
-        }
-      }
-    `;
+    query = getUser;
 
     variables = {
       cognito_sub: {
@@ -102,21 +27,16 @@ exports.handler = (events, context, callback) => {
     };
   }
 
-  axios
-    .post(
-      process.env.HASURA_API,
-      { query, variables },
-      {
-        headers: {
-          'content-type': 'application/json',
-          'x-hasura-admin-secret': process.env.HASURA_ADMIN_SECRET,
-        },
-      }
-    )
-    .then(res => {
-      callback(null, res.data);
-    })
-    .catch(err => {
-      callback(err);
+  const response = await Hasura(query, variables);
+
+  if (!response.success)
+    return callback(null, {
+      success: false,
+      errorCode: 'InternalServerError',
+      errorMessage: 'Failed to fetch user data',
     });
+
+  const cleanedUserDoc = cleanUserdoc(response.result.data.user[0]);
+
+  callback(null, cleanedUserDoc);
 };
