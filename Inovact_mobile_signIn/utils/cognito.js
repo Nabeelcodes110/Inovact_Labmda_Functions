@@ -36,6 +36,7 @@ const signIn = (email, password) =>
       onSuccess: function (result) {
         resolve({
           success: true,
+          errorCode: '',
           errorMessage: '',
           data: {
             idToken: result.idToken.jwtToken,
