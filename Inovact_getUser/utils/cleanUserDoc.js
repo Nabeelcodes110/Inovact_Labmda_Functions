@@ -4,7 +4,8 @@ function cleanUserdoc(userDoc) {
     user_skills: userDoc.user_skills.map(user_skill => {
       return {
         id: user_skill.skill.id,
-        name: user_skill.skill.name,
+        skill_id: user_skill.skill.name,
+        level: user_skill.level,
       };
     }),
     user_interests: userDoc.user_interests.map(user_interest => {

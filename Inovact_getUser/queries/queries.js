@@ -68,6 +68,7 @@ query getUser($id: Int_comparison_exp) {
       id
       name
     }
+    level
   }
   user_interests {
     area_of_interest {
