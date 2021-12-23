@@ -79,14 +79,14 @@ exports.handler = async (events, context, callback) => {
       objects: user_skills_with_user_id,
     };
 
-    Hasura(addUserSkills, variables);
+    await Hasura(addUserSkills, variables);
   }
 
   // Insert interests
   if (events.user_interests instanceof Array) {
     const user_interests_with_user_id = events.user_interests.map(ele => {
       return {
-        ...ele,
+        interest_id: ele.id,
         user_id: response1.result.data.update_user.returning[0].id,
       };
     });
@@ -95,7 +95,7 @@ exports.handler = async (events, context, callback) => {
       objects: user_interests_with_user_id,
     };
 
-    Hasura(addUserInterests, variables);
+    await Hasura(addUserInterests, variables);
   }
 
   const response2 = await Hasura(getUser, {
