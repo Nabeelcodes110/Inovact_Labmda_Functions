@@ -3,6 +3,8 @@ const {
   addUserSkills,
   addUserInterests,
 } = require('./queries/mutations');
+const { getUser } = require('./queries/queries');
+const cleanUserdoc = require('./utils/cleanUserDoc');
 const {
   query: Hasura,
   checkUniquenessOfPhoneNumber,
@@ -96,10 +98,25 @@ exports.handler = async (events, context, callback) => {
     Hasura(addUserInterests, variables);
   }
 
+  const response2 = await Hasura(getUser, {
+    cognito_sub: { _eq: cognito_sub },
+  });
+
+  if (!response2.success) {
+    return callback(null, {
+      success: false,
+      errorCode: 'InternalServerError',
+      errorMessage:
+        'Updated user succesfully but failed to fetch updated user document.',
+    });
+  }
+
+  const cleanedUserDoc = cleanUserdoc(response2.result.data.user[0]);
+
   callback(null, {
     success: true,
     errorCode: '',
     errorMessage: '',
-    data: response1.result.data.update_user.returning[0],
+    data: cleanedUserDoc,
   });
 };
