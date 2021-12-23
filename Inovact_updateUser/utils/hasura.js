@@ -1,4 +1,5 @@
 const axios = require('axios');
+const { checkPhoneNumber } = require('../queries/queries');
 
 //? This is a utility function for querying the postgresql database
 async function query(query, variables = {}) {
@@ -36,6 +37,20 @@ async function query(query, variables = {}) {
     });
 
   return result;
+}
+
+async function checkUniquenessOfPhoneNumber(phoneNumber) {
+  const response = await query(checkPhoneNumber, { phoneNumber });
+
+  if (!response.success) {
+    return false;
+  } else {
+    if (response.result.data.user_aggregate.aggregate.count != 0) {
+      return false;
+    } else {
+      return true;
+    }
+  }
 }
 
 module.exports = { query };

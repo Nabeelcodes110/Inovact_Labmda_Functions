@@ -77,7 +77,16 @@ const getProject = `query getProject($id: Int) {
 }
 `;
 
+const checkPhoneNumber = `query checkPhoneNumber($phoneNumber: String) {
+  user_aggregate(where: {phone_number: {_eq: $phoneNumber}}) {
+    aggregate {
+      count
+    }
+  }
+}`;
+
 module.exports = {
   getUser,
   getProject,
+  checkPhoneNumber,
 };

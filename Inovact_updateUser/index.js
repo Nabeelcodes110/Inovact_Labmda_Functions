@@ -1,5 +1,12 @@
-const { updateUser } = require('./queries/mutations');
-const { query: Hasura } = require('./utils/hasura');
+const {
+  updateUser,
+  addUserSkills,
+  addUserInterests,
+} = require('./queries/mutations');
+const {
+  query: Hasura,
+  checkUniquenessOfPhoneNumber,
+} = require('./utils/hasura');
 
 exports.handler = async (events, context, callback) => {
   const cognito_sub = events.cognito_sub;
@@ -15,8 +22,19 @@ exports.handler = async (events, context, callback) => {
   if (events.last_name) variables['changes']['last_name'] = events.last_name;
   if (events.bio) variables['changes']['bio'] = events.bio;
   if (events.avatar) variables['changes']['avatar'] = events.avatar;
-  if (events.phone_number)
+  if (events.phone_number) {
+    const unique = await checkUniquenessOfPhoneNumber(events.phone_number);
+
+    if (!unique) {
+      return callback(null, {
+        success: false,
+        errorCode: 'PhoneNumberUniquenessException',
+        errorMessage: 'This phone number is already in use',
+      });
+    }
+
     variables['changes']['phone_number'] = events.phone_number;
+  }
   if (events.role) variables['changes']['role'] = events.role;
   if (events.designation)
     variables['changes']['designation'] = events.designation;
@@ -37,17 +55,51 @@ exports.handler = async (events, context, callback) => {
     variables['changes']['profile_complete'] = events.profile_complete;
   if (events.website) variables['changes']['website'] = events.website;
 
-  const response = await Hasura(updateUser, variables);
+  const response1 = await Hasura(updateUser, variables);
 
-  if (!response.success)
+  if (!response1.success)
     return callback(null, {
       success: false,
-      errorMessage: 'InternalServerError',
+      errorCode: 'InternalServerError',
+      errorMessage: 'Failed due to unknows reason',
     });
+
+  // Insert skills
+  if (events.user_skills instanceof Array) {
+    const user_skills_with_user_id = events.user_skills.map(ele => {
+      return {
+        ...ele,
+        user_id: response1.result.data.update_user.returning[0].id,
+      };
+    });
+
+    const variables = {
+      objects: user_skills_with_user_id,
+    };
+
+    Hasura(addUserSkills, variables);
+  }
+
+  // Insert interests
+  if (events.user_interests instanceof Array) {
+    const user_interests_with_user_id = events.user_interests.map(ele => {
+      return {
+        ...ele,
+        user_id: response1.result.data.update_user.returning[0].id,
+      };
+    });
+
+    const variables = {
+      objects: user_interests_with_user_id,
+    };
+
+    Hasura(addUserInterests, variables);
+  }
 
   callback(null, {
     success: true,
+    errorCode: '',
     errorMessage: '',
-    data: response.result.data.update_user.returning[0],
+    data: response1.result.data.update_user.returning[0],
   });
 };
