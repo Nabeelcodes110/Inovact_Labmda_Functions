@@ -1,6 +1,7 @@
 const { query: Hasura } = require('./utils/hasura');
 const { addIdea, addTags, addDocuments } = require('./queries/mutations');
 const { getUser, getIdea } = require('./queries/queries');
+const createDefaultTeam = require('./utils/createDefaultTeam');
 
 exports.handler = async (events, context, callback) => {
   // Find user id
@@ -17,13 +18,29 @@ exports.handler = async (events, context, callback) => {
       errorMessage: 'Failed to find login user',
     });
 
-  const ideaData = {
+  let ideaData = {
     description: events.description,
     title: events.title,
     user_id: response1.result.data.user[0].id,
-    url: events.url,
-    team_id: events.team_id,
   };
+
+  if (!events.team_id) {
+    const teamCreated = await createDefaultTeam(
+      response1.result.data.user[0].id,
+      events.title,
+      events.looking_for_mentors,
+      events.looking_for_members,
+      ''
+    );
+
+    if (!teamCreated.success) {
+      return callback(null, teamCreated);
+    }
+
+    ideaData.team_id = teamCreated.team_id;
+  } else {
+    ideaData.team_id = events.team_id;
+  }
 
   const response2 = await Hasura(addIdea, ideaData);
 
@@ -53,7 +70,7 @@ exports.handler = async (events, context, callback) => {
   }
 
   // Insert Documents
-  if (events.documents.length) {
+  if (events.documents && events.documents.length) {
     const documents = events.documents.map(document => {
       return {
         ...document,
