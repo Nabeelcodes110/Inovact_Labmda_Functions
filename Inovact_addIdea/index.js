@@ -1,5 +1,5 @@
 const { query: Hasura } = require('./utils/hasura');
-const { addIdea, addTags, addDocuments } = require('./queries/mutations');
+const { addIdea, addTags } = require('./queries/mutations');
 const { getUser, getIdea } = require('./queries/queries');
 const createDefaultTeam = require('./utils/createDefaultTeam');
 
