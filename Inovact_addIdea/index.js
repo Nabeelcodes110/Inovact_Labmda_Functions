@@ -44,7 +44,7 @@ exports.handler = async (events, context, callback) => {
 
   const response2 = await Hasura(addIdea, ideaData);
 
-  // If failed to insert project return error
+  // If failed to insert idea return error
   if (!response2.success)
     return callback(null, {
       success: false,
@@ -69,24 +69,7 @@ exports.handler = async (events, context, callback) => {
     const response3 = await Hasura(addTags, tagsData);
   }
 
-  // Insert Documents
-  if (events.documents && events.documents.length) {
-    const documents = events.documents.map(document => {
-      return {
-        ...document,
-        idea_id: response2.result.data.insert_idea.returning[0].id,
-      };
-    });
-
-    const documentsData = {
-      objects: documents,
-    };
-
-    // @TODO Fallback if documents fail to be inserted
-    const response4 = await Hasura(addDocuments, documentsData);
-  }
-
-  // Fetch the project in final stage
+  // Fetch the idea in final stage
   const variables = {
     id: response2.result.data.insert_idea.returning[0].id,
   };

@@ -33,14 +33,6 @@ const addTags = `mutation addIdea($objects: [idea_tag_insert_input!]!) {
   }
 }`;
 
-const addDocuments = `mutation addDocuments($objects: [idea_documents_insert_input!]!) {
-  insert_idea_documents(objects: $objects) {
-    returning {
-      id
-    }
-  }
-}`;
-
 const addTeam = `mutation addTeam($name: String, $looking_for_members: Boolean, $looking_for_mentors: Boolean, $avatar: String) {
   insert_team(objects: [{
     name: $name,
