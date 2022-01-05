@@ -32,12 +32,6 @@ const getIdeas = `query getIdeas {
           role
         }
       }
-      idea_documents {
-        id
-        name
-        url
-        uploaded_at
-      }
       created_at
       updated_at
       user {

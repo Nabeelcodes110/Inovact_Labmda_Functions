@@ -1,4 +1,4 @@
-const axios = require('axios');
+const cleanIdeaDoc = require('./utils/cleanIdeaDoc');
 const { query: Hasura } = require('./utils/hasura');
 const { getIdea, getIdeas } = require('./queries/queries');
 
@@ -14,12 +14,16 @@ exports.handler = async (events, context, callback) => {
 
     if (!response1.success) return callback(null, response1.errors);
 
-    callback(null, response1.result);
+    const cleanedIdeas = response1.result.data.idea.map(cleanIdeaDoc);
+
+    callback(null, cleanedIdeas);
   } else {
     const response = await Hasura(getIdeas);
 
     if (response.success) {
-      callback(null, response.result);
+      const cleanedIdeas = response.result.data.idea.map(cleanIdeaDoc);
+
+      callback(null, cleanedIdeas);
     } else {
       callback(null, response.errors);
     }

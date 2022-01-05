@@ -2,6 +2,7 @@ const { query: Hasura } = require('./utils/hasura');
 const { addIdea, addTags } = require('./queries/mutations');
 const { getUser, getIdea } = require('./queries/queries');
 const createDefaultTeam = require('./utils/createDefaultTeam');
+const cleanIdeaDoc = require('./utils/cleanIdeaDoc');
 
 exports.handler = async (events, context, callback) => {
   // Find user id
@@ -87,6 +88,6 @@ exports.handler = async (events, context, callback) => {
     success: true,
     errorCode: '',
     errorMessage: '',
-    data: response5.result.data.idea[0],
+    data: cleanIdeaDoc(response5.result.data.idea[0]),
   });
 };
