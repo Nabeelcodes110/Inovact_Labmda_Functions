@@ -61,7 +61,6 @@ const addMembers = `mutation addMembers($objects: [team_members_insert_input!]!)
 module.exports = {
   addIdea,
   addTags,
-  addDocuments,
   addTeam,
   addMembers,
 };
