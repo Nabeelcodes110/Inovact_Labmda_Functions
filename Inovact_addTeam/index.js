@@ -71,7 +71,13 @@ exports.handler = async (event, context, callback) => {
 
     const response1 = await Hasura(addTeam, teamData);
 
-    if (!response1.success) callback(null, response1.errors);
+    if (!response1.success)
+      return callback(null, {
+        success: false,
+        errorCode: 'InternalServerError',
+        errorMessage: 'Failed to save team to db.',
+        data: null,
+      });
 
     const team = response1.result.data.insert_team.returning[0];
 
@@ -82,7 +88,13 @@ exports.handler = async (event, context, callback) => {
       cognito_sub: { _eq: cognito_sub },
     });
 
-    if (!response5.success) return callback(null, response5.errors);
+    if (!response5.success)
+      return callback(null, {
+        success: false,
+        errorCode: 'InternalServerError',
+        errorMessage: 'Failed to find login user',
+        data: null,
+      });
 
     const memberObjects = {
       objects: [
@@ -96,7 +108,13 @@ exports.handler = async (event, context, callback) => {
 
     const response6 = await Hasura(addMembers, memberObjects);
 
-    if (!response6.success) return callback(null, response6.errors);
+    if (!response6.success)
+      return callback(null, {
+        success: false,
+        errorCode: 'InternalServerError',
+        errorMessage: 'Failed to save members',
+        data: null,
+      });
 
     // Fetch user ids of existing users
     // Invite all the possible people in the members array
@@ -107,7 +125,13 @@ exports.handler = async (event, context, callback) => {
 
       const response2 = await Hasura(getUsersFromEmailId, emails);
 
-      if (!response2.success) callback(null, response2.errors);
+      if (!response2.success)
+        return callback(null, {
+          success: false,
+          errorCode: 'InternalServerError',
+          errorMessage: 'Failed to invite members',
+          data: null,
+        });
 
       // Extract users from response
       const { user: users } = response2.result.data;
@@ -146,7 +170,13 @@ exports.handler = async (event, context, callback) => {
 
       const response3 = await Hasura(addInvitations, invitations);
 
-      if (!response3.success) return callback(null, response3.erorrs);
+      if (!response3.success)
+        return callback(null, {
+          success: false,
+          errorCode: 'InternalServerError',
+          errorMessage: 'Failed to invite members',
+          data: null,
+        });
     }
 
     // Save roles required for the team
@@ -203,7 +233,12 @@ exports.handler = async (event, context, callback) => {
       const response4 = await Hasura(addTeamTags, tagsData);
     }
 
-    callback(null, { success: true });
+    callback(null, {
+      success: true,
+      errorCode: '',
+      errorMessage: '',
+      data: null,
+    });
 
     // @TODO Handle emails of non existing users
     // @TODO Send invites over mail using emails of existing users
