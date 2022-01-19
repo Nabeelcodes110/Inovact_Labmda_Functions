@@ -70,18 +70,6 @@ exports.handler = async (events, context, callback) => {
     const response3 = await Hasura(addTags, tagsData);
   }
 
-  // Fetch the idea in final stage
-  const variables = {
-    id: response2.result.data.insert_idea.returning[0].id,
-  };
-
-  if (!response5.success)
-    callback(null, {
-      success: false,
-      errorCode: 'InternalServerError',
-      errorMessage: 'Saved project successfully but could not retieve it.',
-    });
-
   callback(null, {
     success: true,
     errorCode: '',
