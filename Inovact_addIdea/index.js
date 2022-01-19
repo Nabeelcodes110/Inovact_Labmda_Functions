@@ -75,8 +75,6 @@ exports.handler = async (events, context, callback) => {
     id: response2.result.data.insert_idea.returning[0].id,
   };
 
-  const response5 = await Hasura(getIdea, variables);
-
   if (!response5.success)
     callback(null, {
       success: false,
@@ -88,6 +86,6 @@ exports.handler = async (events, context, callback) => {
     success: true,
     errorCode: '',
     errorMessage: '',
-    data: cleanIdeaDoc(response5.result.data.idea[0]),
+    data: null,
   });
 };
