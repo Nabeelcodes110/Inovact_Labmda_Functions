@@ -20,6 +20,7 @@ exports.handler = async (events, context, callback) => {
       success: false,
       errorCode: 'InternalServerError',
       errorMessage: 'Failed to find login user',
+      data: null,
     });
 
   // Insert project
@@ -39,6 +40,7 @@ exports.handler = async (events, context, callback) => {
       success: false,
       errorCode: 'InternalServerError',
       errorMessage: 'Failed to save project',
+      data: null,
     });
 
   // Insert mentions
@@ -92,24 +94,10 @@ exports.handler = async (events, context, callback) => {
     const response6 = await Hasura(addDocuments, documentsData);
   }
 
-  // Fetch the project in final stage
-  const variables = {
-    id: response2.result.data.insert_project.returning[0].id,
-  };
-
-  const response7 = await Hasura(getProject, variables);
-
-  if (!response7.success)
-    return callback(null, {
-      success: false,
-      errorCode: 'InternalServerError',
-      errorMessage: 'Saved project successfully but could not retieve it.',
-    });
-
   callback(null, {
     success: true,
     errorCode: '',
     errorMessage: '',
-    data: response7.result.data.project[0],
+    data: null,
   });
 };
