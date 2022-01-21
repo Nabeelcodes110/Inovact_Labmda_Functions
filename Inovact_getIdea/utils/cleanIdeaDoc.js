@@ -1,4 +1,6 @@
 function cleanIdeaDoc(ideaDoc) {
+  ideaDoc.idea_likes = ideaDoc.idea_likes.result.count;
+
   return {
     ...ideaDoc,
     idea_tags: ideaDoc.idea_tags.map(idea_tag => {

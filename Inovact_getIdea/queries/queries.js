@@ -10,13 +10,9 @@ const getIdeas = `query getIdeas {
           name
         }
       }
-      idea_likes {
-        user {
-          id
-          first_name
-          last_name
-          role
-          avatar
+      idea_likes: idea_likes_aggregate {
+        result: aggregate {
+          count
         }
       }
       idea_comments {
@@ -26,10 +22,8 @@ const getIdeas = `query getIdeas {
         updated_at
         user {
           id
-          avatar
           first_name
           last_name
-          role
         }
       }
       created_at
@@ -57,13 +51,9 @@ const getIdea = `query getIdea($id: Int) {
           name
         }
       }
-      idea_likes {
-        user {
-          id
-          first_name
-          last_name
-          role
-          avatar
+      idea_likes: idea_likes_aggregate {
+        result: aggregate {
+          count
         }
       }
       idea_comments {
@@ -73,10 +63,8 @@ const getIdea = `query getIdea($id: Int) {
         updated_at
         user {
           id
-          avatar
           first_name
           last_name
-          role
         }
       }
       created_at
