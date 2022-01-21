@@ -23,10 +23,9 @@ const getUser = `query getUser($cognito_sub: String_comparison_exp) {
   website,
   profile_complete
   user_skills {
-    skill {
-      id
-      name
-    }
+    id
+    skill
+    level
   }
   user_interests {
     area_of_interest {
@@ -64,10 +63,8 @@ query getUser($id: Int_comparison_exp) {
   website
   profile_complete
   user_skills {
-    skill {
-      id
-      name
-    }
+    id
+    skill
     level
   }
   user_interests {
