@@ -32,24 +32,10 @@ exports.handler = async (events, context, callback) => {
       errorMessage: 'Failed to save thought',
     });
 
-  // Fetch the thought in final stage
-  const variables = {
-    id: response2.result.data.insert_thoughts.returning[0].id,
-  };
-
-  const response5 = await Hasura(getThought, variables);
-
-  if (!response5.success)
-    callback(null, {
-      success: false,
-      errorCode: 'InternalServerError',
-      errorMessage: 'Saved project successfully but could not retieve it.',
-    });
-
   callback(null, {
     success: true,
     errorCode: '',
     errorMessage: '',
-    data: response5.result.data.thoughts[0],
+    data: null,
   });
 };
