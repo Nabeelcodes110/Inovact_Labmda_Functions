@@ -29,7 +29,7 @@ const updateUser = `mutation updateUser($cognito_sub: String_comparison_exp, $ch
 `;
 
 const addUserSkills = `mutation addUserSkills($objects: [user_skills_insert_input!]!) {
-  insert_user_skills(objects: $objects, on_conflict: {constraint: user_skills_skill_id_user_id_key, update_columns: level}) {
+  insert_user_skills(objects: $objects, on_conflict: {constraint:  user_skills_skill_user_id_key, update_columns: level}) {
     returning {
       id
     }
