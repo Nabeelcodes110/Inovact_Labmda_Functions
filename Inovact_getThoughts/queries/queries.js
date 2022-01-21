@@ -3,23 +3,22 @@ const getThoughts = `query getThoughts {
       id
       thought
       user_id
-      
-      thought_likes {
-        user {
-          id
-          first_name
-          last_name
-          role
-          avatar
+      thought_likes: thought_likes_aggregate  {
+        result: aggregate {
+          count
         }
       }
       thought_comments {
         id
         created_at
         updated_at
-        user_id
+        user {
+          id
+          first_name
+          last_name
+        }
+        text
       }
-    
       created_at
       updated_at
       user {
@@ -34,31 +33,30 @@ const getThoughts = `query getThoughts {
   `;
 
 const getThought = `query getThought($id: Int) {
-    thoughts (where: { id: { _eq: $id }}) {
+  thoughts (where: { id: { _eq: $id }}) {
+    id
+    thought
+    user_id
+    thought_comments {
       id
-     thought
-      user_id
-     
-      
-      thought_comments {
-        id
-        created_at
-        updated_at
-        user_id
-      }
-      thought_likes {
-        user {
-          id
-          first_name
-          last_name
-          role
-          avatar
-        }
-      }
       created_at
       updated_at
+      user {
+        id
+        first_name
+        last_name
+      }
+      text
     }
+    thought_likes: thought_likes_aggregate  {
+      result: aggregate {
+        count
+      }
+    }
+    created_at
+    updated_at
   }
+}
   `;
 
 module.exports = {

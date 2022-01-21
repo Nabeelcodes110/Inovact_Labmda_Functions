@@ -14,14 +14,23 @@ exports.handler = async (events, context, callback) => {
 
     if (!response1.success) return callback(null, response1.errors);
 
-    callback(null, response1.result);
+    let thought = response1.result.data.thoughts[0];
+
+    thought.thought_likes = thought.thought_likes.result.count;
+
+    callback(null, thought);
   } else {
     const response = await Hasura(getThoughts);
 
-    if (response.success) {
-      callback(null, response.result);
-    } else {
-      callback(null, response.errors);
+    if (!response.success) {
+      return callback(null, response.errors);
     }
+
+    const thoughts = response.result.data.thoughts.map(thought => {
+      thought.thought_likes = thought.thought_likes.result.count;
+      return thought;
+    });
+
+    callback(null, thoughts);
   }
 };
