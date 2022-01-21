@@ -39,7 +39,8 @@ const signIn = (email, password) =>
           errorCode: '',
           errorMessage: '',
           data: {
-            idToken: result.idToken.jwtToken,
+            idToken: result.getIdToken().jwtToken,
+            refreshToken: result.getRefreshToken().token,
           },
         });
       },
