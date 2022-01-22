@@ -18,6 +18,7 @@ exports.handler = async (events, context, callback) => {
       success: false,
       errorCode: 'InternalServerError',
       errorMessage: 'Failed to find login user',
+      data: null,
     });
 
   const id = await events.id;
@@ -32,6 +33,7 @@ exports.handler = async (events, context, callback) => {
       success: false,
       errorCode: 'InternalServerError',
       errorMessage: 'Failed to find thought',
+      data: null,
     });
 
   //check current user
@@ -49,12 +51,14 @@ exports.handler = async (events, context, callback) => {
         success: true,
         errorCode: '',
         errorMessage: '',
+        data: null,
       });
     } else {
       callback(null, {
         success: false,
         errorCode: 'InternalServerError',
         errorMessage: 'Failed to delete thought',
+        data: null,
       });
     }
   } else {
@@ -62,6 +66,7 @@ exports.handler = async (events, context, callback) => {
       success: false,
       errorCode: 'UnauthorizedUserException',
       errorMessage: 'Only the owner the thought can delete it.',
+      data: null,
     });
   }
 };
