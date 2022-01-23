@@ -23,12 +23,14 @@ exports.handler = async (events, context, callback) => {
       success: true,
       errorCode: '',
       errorMessage: '',
+      data: null,
     });
   } else {
     callback(null, {
       success: false,
       errorCode: 'InternalServerError',
       errorMessage: 'Failed to update idea',
+      data: null,
     });
   }
 };

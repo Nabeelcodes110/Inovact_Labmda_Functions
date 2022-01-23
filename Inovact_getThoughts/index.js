@@ -14,6 +14,10 @@ exports.handler = async (events, context, callback) => {
 
     if (!response1.success) return callback(null, response1.errors);
 
+    if (response1.result.data.thoughts.length == 0) {
+      return callback(null, []);
+    }
+
     let thought = response1.result.data.thoughts[0];
 
     thought.thought_likes = thought.thought_likes.result.count;

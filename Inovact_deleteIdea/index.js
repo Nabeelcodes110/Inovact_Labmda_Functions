@@ -16,17 +16,22 @@ exports.handler = async (events, context, callback) => {
         success: true,
         errorCode: '',
         errorMessage: '',
+        data: null,
       });
     } else {
       callback(null, {
         success: false,
         errorCode: 'InternalServerError',
         errorMessage: 'Failed to delete thought',
+        data: null,
       });
     }
   } else {
     callback({
-      message: 'Invalid or id not found',
+      success: false,
+      errorCode: 'InvalidInput',
+      errorMessage: 'Invalid or id not found',
+      data: null,
     });
   }
 };

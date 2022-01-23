@@ -16,12 +16,30 @@ exports.handler = async (events, context, callback) => {
 
     if (!response.success) return callback(null, response.errors);
 
-    callback(null, response.result);
+    if (response.result.data.thoughts.length == 0) {
+      return callback(null, []);
+    }
+
+    const thoughts = response.result.data.thoughts.map(thought => {
+      thought.thought_likes = thought.thought_likes.result.count;
+      return thought;
+    });
+
+    callback(null, thoughts);
   } else {
     const response = await Hasura(getUserThoughts, { user_id });
 
     if (!response.success) return callback(null, response.errors);
 
-    callback(null, response.result);
+    if (response.result.data.thoughts.length == 0) {
+      return callback(null, []);
+    }
+
+    const thoughts = response.result.data.thoughts.map(thought => {
+      thought.thought_likes = thought.thought_likes.result.count;
+      return thought;
+    });
+
+    callback(null, thoughts);
   }
 };

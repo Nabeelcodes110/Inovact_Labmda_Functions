@@ -1,62 +1,66 @@
 const getUserThoughts = `query getUserThoughts($user_id: Int) {
   thoughts(where: {user_id: {_eq: $user_id}}) {
     id
-    thought
-    user_id
-    
-    thought_likes {
+      thought
+      user_id
+      thought_likes: thought_likes_aggregate  {
+        result: aggregate {
+          count
+        }
+      }
+      thought_comments {
+        id
+        created_at
+        updated_at
+        user {
+          id
+          first_name
+          last_name
+        }
+        text
+      }
+      created_at
+      updated_at
       user {
         id
+        avatar
         first_name
         last_name
         role
-        avatar
       }
-    }
-    thought_comments {
-      id
-      created_at
-      updated_at
-      user_id
-    }
-  
-    created_at
-    updated_at
-    user {
-      id
-      avatar
-      first_name
-      last_name
-      role
-    }
   }
 }`;
 
 const getUserThoughtsWithCognitoSub = `query getUserThoughts($cognito_sub: String) {
   thoughts(where: { user: { cognito_sub: { _eq: $cognito_sub }}}) {
     id
-    thought
-    user_id
-    
-    thought_likes {
+      thought
       user_id
-    }
-    thought_comments {
-      id
+      thought_likes: thought_likes_aggregate  {
+        result: aggregate {
+          count
+        }
+      }
+      thought_comments {
+        id
+        created_at
+        updated_at
+        user {
+          id
+          first_name
+          last_name
+        }
+        text
+      }
       created_at
       updated_at
-      user_id
-    }
-  
-    created_at
-    updated_at
-    user {
-      id
-      avatar
-      first_name
-      last_name
-      role
-    }
+      user {
+        id
+        avatar
+        first_name
+        last_name
+        role
+      }
   }
 }`;
 
