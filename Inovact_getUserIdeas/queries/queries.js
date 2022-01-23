@@ -4,18 +4,15 @@ const getUserIdeas = `query getIdeas($user_id: Int) {
     title
     description
     user_id
+    team_id
     idea_tags {
       hashtag {
         name
       }
     }
-    idea_likes {
-      user {
-        id
-        first_name
-        last_name
-        role
-        avatar
+    idea_likes: idea_likes_aggregate {
+      result: aggregate {
+        count
       }
     }
     idea_comments {
@@ -23,13 +20,11 @@ const getUserIdeas = `query getIdeas($user_id: Int) {
       created_at
       text
       updated_at
-      user_id
-    }
-    idea_documents {
-      id
-      name
-      url
-      uploaded_at
+      user {
+        id
+        first_name
+        last_name
+      }
     }
     created_at
     updated_at
