@@ -3,9 +3,12 @@ const {
   addMentions,
   addTags,
   addDocuments,
+  addRolesRequired,
+  addSkillsRequired,
 } = require('./queries/mutations');
 const { getUser, getProject } = require('./queries/queries');
 const { query: Hasura } = require('./utils/hasura');
+const createDefaultTeam = require('./utils/createDefaultTeam');
 
 exports.handler = async (events, context, callback) => {
   // Find user id
@@ -29,8 +32,23 @@ exports.handler = async (events, context, callback) => {
     title: events.title,
     user_id: response1.result.data.user[0].id,
     status: events.status,
-    team_id: events.team_id,
+    completed: events.completed,
   };
+
+  // Create a default team
+  const teamCreated = await createDefaultTeam(
+    response1.result.data.user[0].id,
+    events.team_name ? events.team_name : events.title + ' team',
+    events.looking_for_mentors,
+    events.looking_for_members,
+    events.team_on_inovact
+  );
+
+  if (!teamCreated.success) {
+    return callback(null, teamCreated);
+  }
+
+  projectData.team_id = teamCreated.team_id;
 
   const response2 = await Hasura(addProject, projectData);
 
@@ -42,6 +60,34 @@ exports.handler = async (events, context, callback) => {
       errorMessage: 'Failed to save project',
       data: null,
     });
+
+  // Insert roles required and skills required
+  role_if: if (events.roles_required.length > 0) {
+    const roles_data = events.roles_required.map(ele => {
+      return {
+        team_id: teamCreated.team_id,
+        role_name: ele.role_name,
+      };
+    });
+
+    const response1 = await Hasura(addRolesRequired, { objects: roles_data });
+
+    if (!response1.success) break role_if;
+
+    let skills_data = [];
+
+    for (const i in events.roles_required) {
+      for (const skill of events.roles_required[i].skills_required) {
+        skills_data.push({
+          role_requirement_id:
+            response1.result.data.insert_team_role_requirements.returning[i].id,
+          skill_name: skill,
+        });
+      }
+    }
+
+    const response2 = await Hasura(addSkillsRequired, { objects: skills_data });
+  }
 
   // Insert mentions
   if (events.mentions.length) {
