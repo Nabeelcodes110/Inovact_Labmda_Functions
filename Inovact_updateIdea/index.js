@@ -1,4 +1,3 @@
-const axios = require('axios');
 const { query: Hasura } = require('./utils/hasura');
 const { updateIdea_query } = require('./queries/queries');
 
@@ -10,7 +9,6 @@ exports.handler = async (events, context, callback) => {
     changes: {},
   };
 
-  if (events.url) variables['changes']['url'] = events.url;
   if (events.caption) variables['changes']['caption'] = events.caption;
   if (events.description)
     variables['changes']['description'] = events.description;
