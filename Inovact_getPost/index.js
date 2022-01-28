@@ -13,12 +13,12 @@ exports.handler = async (events, context, callback) => {
 
     if (!response1.success) return callback(null, response1.errors);
 
-    callback(null, response1.result);
+    callback(null, response1.result.data.project);
   } else {
     const response = await Hasura(getProjects);
 
     if (response.success) {
-      callback(null, response.result);
+      callback(null, response.result.data.project);
     } else {
       callback(null, response.errors);
     }
