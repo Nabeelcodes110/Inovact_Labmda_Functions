@@ -35,6 +35,11 @@ const getIdeas = `query getIdeas {
         last_name
         role
       }
+      team {
+        id
+        looking_for_members
+        looking_for_mentors
+      }
     }
   }
   `;
@@ -66,6 +71,11 @@ const getIdea = `query getIdea($id: Int) {
           first_name
           last_name
         }
+      }
+      team {
+        id
+        looking_for_members
+        looking_for_mentors
       }
       created_at
       updated_at

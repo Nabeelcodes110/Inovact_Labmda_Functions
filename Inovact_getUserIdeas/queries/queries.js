@@ -10,6 +10,11 @@ const getUserIdeas = `query getIdeas($user_id: Int) {
         name
       }
     }
+    team {
+      id
+      looking_for_members
+      looking_for_mentors
+    }
     idea_likes: idea_likes_aggregate {
       result: aggregate {
         count
