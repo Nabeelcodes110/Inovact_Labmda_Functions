@@ -1,5 +1,6 @@
 const { query: Hasura } = require('./utils/hasura');
 const { getUserId, getUserPosts } = require('./queries/queries');
+const cleanPostDoc = require('./utils/cleanPostDoc');
 
 exports.handler = async (events, context, callback) => {
   let user_id = events.user_id;
@@ -25,5 +26,7 @@ exports.handler = async (events, context, callback) => {
 
   if (!response1.success) return callback(null, response1.errors);
 
-  callback(null, response1.result);
+  const cleanedPosts = response1.result.data.project.map(cleanPostDoc);
+
+  callback(null, cleanedPosts);
 };

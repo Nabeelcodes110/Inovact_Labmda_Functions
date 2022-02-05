@@ -8,13 +8,9 @@ const getProjects = `query getProjects {
         name
       }
     }
-    project_likes {
-      user {
-        id
-        first_name
-        last_name
-        role
-        avatar
+    project_likes: project_likes_aggregate {
+      result: aggregate {
+        count
       }
     }
     project_comments {
@@ -85,13 +81,9 @@ const getProject = `query getProject($id: Int) {
         name
       }
     }
-    project_likes {
-      user {
-        id
-        first_name
-        last_name
-        role
-        avatar
+    project_likes: project_likes_aggregate {
+      result: aggregate {
+        count
       }
     }
     project_comments {
