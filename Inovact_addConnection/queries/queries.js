@@ -1,5 +1,5 @@
-const getUserId = `query getUser($cognito_sub: String_comparison_exp) {
-  user(where: { cognito_sub: $cognito_sub }) {
+const getUserId = `query getUser($cognito_sub: String_comparison_exp, $id: Int_comparison_exp) {
+  user(where: { _or: [ { cognito_sub: $cognito_sub }, { id: $id } ]}) {
     id
   }
 }
