@@ -55,9 +55,17 @@ exports.handler = async (events, context, callback) => {
 
   // Insert tags
   if (events.idea_tags.length) {
-    const tags = events.idea_tags.map(tag_id => {
+    const tags = events.idea_tags.map(tag_name => {
       return {
-        tag_id,
+        hashtag: {
+          data: {
+            name: tag_name.toLowerCase(),
+          },
+          on_conflict: {
+            constraint: 'hashtag_tag_name_key',
+            update_columns: 'name',
+          },
+        },
         idea_id: response2.result.data.insert_idea.returning[0].id,
       };
     });

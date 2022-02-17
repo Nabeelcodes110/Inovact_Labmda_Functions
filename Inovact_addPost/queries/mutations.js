@@ -55,14 +55,12 @@ const addMentions = `mutation addMentions($objects: [project_mentions_insert_inp
   }
 }`;
 
-const addTags = `mutation addTags($objects: [project_tag_insert_input!]!) {
+const addTags = `mutation addProjectTags($objects: [project_tag_insert_input!]!) {
   insert_project_tag(objects: $objects) {
-    returning {
-      project_id
-      tag_id
-    }
+    affected_rows
   }
-}`;
+}
+`;
 
 const addDocuments = `mutation addDocuments($objects: [project_documents_insert_input!]!) {
   insert_project_documents(objects: $objects) {

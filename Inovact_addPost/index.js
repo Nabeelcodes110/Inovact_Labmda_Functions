@@ -108,9 +108,17 @@ exports.handler = async (events, context, callback) => {
 
   // Insert tags
   if (events.project_tags.length) {
-    const tags = events.project_tags.map(tag_id => {
+    const tags = events.project_tags.map(tag_name => {
       return {
-        tag_id,
+        hashtag: {
+          data: {
+            name: tag_name.toLowerCase(),
+          },
+          on_conflict: {
+            constraint: 'hashtag_tag_name_key',
+            update_columns: 'name',
+          },
+        },
         project_id: response2.result.data.insert_project.returning[0].id,
       };
     });
@@ -127,7 +135,8 @@ exports.handler = async (events, context, callback) => {
   if (events.documents.length) {
     const documents = events.documents.map(document => {
       return {
-        ...document,
+        name: document.name,
+        url: document.url,
         project_id: response2.result.data.insert_project.returning[0].id,
       };
     });
