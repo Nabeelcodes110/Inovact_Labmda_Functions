@@ -2,37 +2,41 @@ const { query: Hasura } = require('./utils/hasura');
 const { getUserConnections, getUserId } = require('./queries/queries');
 
 exports.handler = async (events, context, callback) => {
-  const user_id = events.user_id;
+  const cognito_sub = events.cognito_sub;
+  const response1 = await Hasura(getUserId, {
+    cognito_sub: { _eq: cognito_sub },
+  });
 
-  let variables = {
-    user_id: {
-      _eq: '',
-    },
+  const user_id = parseInt(response1.result.data.user[0].id);
+
+  const variables = {
+    user_id,
   };
-
-  if (user_id) variables.user_id._eq = user_id;
-  else {
-    const cognito_sub = events.cognito_sub;
-    const response1 = await Hasura(getUserId, {
-      cognito_sub: { _eq: cognito_sub },
-    });
-
-    if (response1.success) {
-      if (response1.result.data.user.length) {
-        variables.user_id._eq = response1.result.data.user[0].id;
-      } else {
-        return callback('User not found');
-      }
-    } else {
-      return callback(null, response1.errors);
-    }
-  }
 
   const response2 = await Hasura(getUserConnections, variables);
 
+  const connections = response2.result.data.connections.map(doc => {
+    let obj = {
+      status: doc.status,
+    };
+
+    if (doc.user1 == user_id) {
+      obj.user = doc.userByUser2;
+    } else {
+      obj.user = doc.user;
+    }
+
+    return obj;
+  });
+
   if (response2.success) {
-    callback(null, response2.result);
+    callback(null, connections);
   } else {
-    callback(null, response2.errors);
+    callback(null, {
+      success: false,
+      errorCode: 'InternalServerError',
+      errorMessage: JSON.stringify(response2.errors),
+      data: null,
+    });
   }
 };

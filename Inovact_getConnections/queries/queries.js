@@ -5,12 +5,10 @@ const getUserId = `query getUser($cognito_sub: String_comparison_exp) {
 }
 `;
 
-const getUserConnections = `query getMyConnections($user_id: Int_comparison_exp) {
-  connections(where: { _or: [{ user1: $user_id }, { user2: $user_id}]}) {
+const getUserConnections = `query getMyConnections($user_id: Int) {
+  connections(where: {_or: [{user2: {_eq: $user_id}, status: {_eq: "pending"}}, {_and: [{status: {_eq: "connected"}, _or: [{user1: {_eq: $user_id}}, {user2: {_eq: $user_id}}]}]}]}) {
     user1
     user2
-    created_at
-    formed_at
     status
     user {
       id
@@ -29,7 +27,9 @@ const getUserConnections = `query getMyConnections($user_id: Int_comparison_exp)
       user_name
     }
   }
-}`;
+}
+
+`;
 
 module.exports = {
   getUserConnections,
