@@ -14,7 +14,13 @@ exports.handler = async (events, context, callback) => {
     cognito_sub: { _eq: cognito_sub },
   });
 
-  if (!response1.success) return callback(null, response1.errors);
+  if (!response1.success)
+    return callback(null, {
+      success: false,
+      errorCode: 'InternalServerError',
+      errorMessage: JSON.stringify(response1.errors),
+      data: null,
+    });
 
   // Fetch connection
   const variables = {
@@ -24,11 +30,28 @@ exports.handler = async (events, context, callback) => {
 
   const response2 = await Hasura(getPendingConnection, variables);
 
-  if (!response2.success) callback(null, response2.errors);
+  if (!response2.success)
+    callback(null, {
+      success: false,
+      errorCode: 'InternalServerError',
+      errorMessage: JSON.stringify(response2.errors),
+      data: null,
+    });
 
   const response3 = await Hasura(deleteConnection, variables);
 
-  if (!response3.success) callback(null, response3.errors);
+  if (!response3.success)
+    callback(null, {
+      success: false,
+      errorCode: 'InternalServerError',
+      errorMessage: JSON.stringify(response3.errors),
+      data: null,
+    });
 
-  callback(null);
+  callback(null, {
+    success: true,
+    errorCode: '',
+    errorMessage: '',
+    data: null,
+  });
 };

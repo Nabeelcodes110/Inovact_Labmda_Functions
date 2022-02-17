@@ -19,11 +19,28 @@ exports.handler = async (events, context, callback) => {
 
   const response2 = await Hasura(getPendingConnection, variables);
 
-  if (!response2.success) callback(null, response2.errors);
+  if (!response2.success)
+    callback(null, {
+      success: false,
+      errorCode: 'InternalServerError',
+      errorMessage: JSON.stringify(response2.errors),
+      data: null,
+    });
 
   const response3 = await Hasura(acceptConnection, variables);
 
-  if (!response3.success) callback(null, response3.errors);
+  if (!response3.success)
+    callback(null, {
+      success: false,
+      errorCode: 'InternalServerError',
+      errorMessage: JSON.stringify(response3.errors),
+      data: null,
+    });
 
-  callback(null);
+  callback(null, {
+    success: true,
+    errorCode: '',
+    errorMessage: '',
+    data: null,
+  });
 };
