@@ -16,6 +16,7 @@ const getThoughts = `query getThoughts {
           id
           first_name
           last_name
+          avatar
         }
         text
       }
@@ -52,6 +53,7 @@ const getThought = `query getThought($id: Int) {
         id
         first_name
         last_name
+        avatar
       }
       text
     }

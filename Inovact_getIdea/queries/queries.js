@@ -24,6 +24,7 @@ const getIdeas = `query getIdeas {
           id
           first_name
           last_name
+          avatar
         }
       }
       created_at
@@ -70,6 +71,7 @@ const getIdea = `query getIdea($id: Int) {
           id
           first_name
           last_name
+          avatar
         }
       }
       user {
