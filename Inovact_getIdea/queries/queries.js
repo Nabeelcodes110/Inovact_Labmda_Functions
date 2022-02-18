@@ -49,8 +49,8 @@ const getIdea = `query getIdea($id: Int) {
       id
       title
       description
-      user_id
       team_id
+      user_id
       idea_tags {
         hashtag {
           name
@@ -71,6 +71,13 @@ const getIdea = `query getIdea($id: Int) {
           first_name
           last_name
         }
+      }
+      user {
+        id
+        avatar
+        first_name
+        last_name
+        role
       }
       team {
         id

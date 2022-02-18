@@ -37,6 +37,13 @@ const getThought = `query getThought($id: Int) {
     id
     thought
     user_id
+    user {
+      id
+      avatar
+      first_name
+      last_name
+      role
+    }
     thought_comments {
       id
       created_at
