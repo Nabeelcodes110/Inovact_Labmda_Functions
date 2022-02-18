@@ -1,4 +1,4 @@
-const getIdeas = `query getIdeas {
+const getIdeas = `query getIdeas($cognito_sub: String) {
     idea {
       id
       title
@@ -11,6 +11,11 @@ const getIdeas = `query getIdeas {
         }
       }
       idea_likes: idea_likes_aggregate {
+        result: aggregate {
+          count
+        }
+      }
+      has_liked: idea_likes_aggregate (where: { user: { cognito_sub: {_eq: $cognito_sub}}}) {
         result: aggregate {
           count
         }
@@ -45,7 +50,7 @@ const getIdeas = `query getIdeas {
   }
   `;
 
-const getIdea = `query getIdea($id: Int) {
+const getIdea = `query getIdea($id: Int, $cognito_sub: String) {
     idea (where: { id: { _eq: $id }}) {
       id
       title
@@ -58,6 +63,11 @@ const getIdea = `query getIdea($id: Int) {
         }
       }
       idea_likes: idea_likes_aggregate {
+        result: aggregate {
+          count
+        }
+      }
+      has_liked: idea_likes_aggregate (where: { user: { cognito_sub: {_eq: $cognito_sub}}}) {
         result: aggregate {
           count
         }

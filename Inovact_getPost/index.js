@@ -8,24 +8,40 @@ exports.handler = async (events, context, callback) => {
   if (id) {
     const variables = {
       id,
+      cognito_sub: events.cognito_sub,
     };
 
     const response1 = await Hasura(getProject, variables);
 
-    if (!response1.success) return callback(null, response1.errors);
+    if (!response1.success)
+      return callback(null, {
+        success: false,
+        errorCode: 'InternalServerError',
+        errorMessage: JSON.stringify(response1.errors),
+        data: null,
+      });
 
     const cleanedPosts = response1.result.data.project.map(cleanPostDoc);
 
     callback(null, cleanedPosts);
   } else {
-    const response = await Hasura(getProjects);
+    const variables = {
+      cognito_sub: events.cognito_sub,
+    };
 
-    const cleanedPosts = response.result.data.project.map(cleanPostDoc);
+    const response = await Hasura(getProjects, variables);
 
     if (response.success) {
+      const cleanedPosts = response.result.data.project.map(cleanPostDoc);
+
       callback(null, cleanedPosts);
     } else {
-      callback(null, response.errors);
+      callback(null, {
+        success: false,
+        errorCode: 'InternalServerError',
+        errorMessage: JSON.stringify(response.errors),
+        data: null,
+      });
     }
   }
 };

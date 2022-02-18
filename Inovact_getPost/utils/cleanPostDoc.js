@@ -1,5 +1,6 @@
 function cleanPostDoc(postDoc) {
   postDoc.project_likes = postDoc.project_likes.result.count;
+  postDoc.has_liked = postDoc.has_liked.result.count == 1 ? true : false;
 
   return {
     ...postDoc,

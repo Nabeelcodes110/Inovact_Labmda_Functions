@@ -1,4 +1,4 @@
-const axios = require('axios');
+const cleanThoughtDoc = require('./utils/cleanThoughtDoc');
 const { query: Hasura } = require('./utils/hasura');
 const { getThought, getThoughts } = require('./queries/queries');
 
@@ -8,33 +8,40 @@ exports.handler = async (events, context, callback) => {
   if (id) {
     const variables = {
       id,
+      cognito_sub: events.cognito_sub,
     };
 
     const response1 = await Hasura(getThought, variables);
 
-    if (!response1.success) return callback(null, response1.errors);
+    if (!response1.success)
+      return callback(null, {
+        success: false,
+        errorCode: 'InternalServerError',
+        errorMessage: JSON.stringify(response1.errors),
+        data: null,
+      });
 
-    if (response1.result.data.thoughts.length == 0) {
-      return callback(null, []);
-    }
+    const cleanedThoughts = response1.result.data.thoughts.map(cleanThoughtDoc);
 
-    let thought = response1.result.data.thoughts[0];
-
-    thought.thought_likes = thought.thought_likes.result.count;
-
-    callback(null, thought);
+    callback(null, cleanedThoughts);
   } else {
-    const response = await Hasura(getThoughts);
+    const variables = {
+      cognito_sub: events.cognito_sub,
+    };
+
+    const response = await Hasura(getThoughts, variables);
 
     if (!response.success) {
-      return callback(null, response.errors);
+      return callback(null, {
+        success: false,
+        errorCode: 'InternalServerError',
+        errorMessage: JSON.stringify(response.errors),
+        data: null,
+      });
     }
 
-    const thoughts = response.result.data.thoughts.map(thought => {
-      thought.thought_likes = thought.thought_likes.result.count;
-      return thought;
-    });
+    const cleanedThoughts = response.result.data.thoughts.map(cleanThoughtDoc);
 
-    callback(null, thoughts);
+    callback(null, cleanedThoughts);
   }
 };

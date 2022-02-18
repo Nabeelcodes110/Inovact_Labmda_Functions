@@ -1,9 +1,14 @@
-const getThoughts = `query getThoughts {
+const getThoughts = `query getThoughts($cognito_sub: String) {
     thoughts(limit:20, order_by: {created_at:desc}) {
       id
       thought
       user_id
       thought_likes: thought_likes_aggregate  {
+        result: aggregate {
+          count
+        }
+      }
+      has_liked: thought_likes_aggregate (where: { user: { cognito_sub: {_eq: $cognito_sub}}}) {
         result: aggregate {
           count
         }
@@ -33,7 +38,7 @@ const getThoughts = `query getThoughts {
   }
   `;
 
-const getThought = `query getThought($id: Int) {
+const getThought = `query getThought($id: Int, $cognito_sub: String) {
   thoughts (where: { id: { _eq: $id }}) {
     id
     thought
@@ -58,6 +63,11 @@ const getThought = `query getThought($id: Int) {
       text
     }
     thought_likes: thought_likes_aggregate  {
+      result: aggregate {
+        count
+      }
+    }
+    has_liked: thought_likes_aggregate (where: { user: { cognito_sub: {_eq: $cognito_sub}}}) {
       result: aggregate {
         count
       }

@@ -1,4 +1,4 @@
-const getProjects = `query getProjects {
+const getProjects = `query getProjects($cognito_sub: String) {
   project {
     id
     title
@@ -9,6 +9,11 @@ const getProjects = `query getProjects {
       }
     }
     project_likes: project_likes_aggregate {
+      result: aggregate {
+        count
+      }
+    }
+    has_liked: project_likes_aggregate (where: { user: { cognito_sub: {_eq: $cognito_sub}}}) {
       result: aggregate {
         count
       }
@@ -71,7 +76,7 @@ const getProjects = `query getProjects {
   }
 }`;
 
-const getProject = `query getProject($id: Int) {
+const getProject = `query getProject($id: Int, $cognito_sub: String) {
   project(where: { id: { _eq: $id }}) {
     id
     title
@@ -82,6 +87,11 @@ const getProject = `query getProject($id: Int) {
       }
     }
     project_likes: project_likes_aggregate {
+      result: aggregate {
+        count
+      }
+    }
+    has_liked: project_likes_aggregate (where: { user: { cognito_sub: {_eq: $cognito_sub}}}) {
       result: aggregate {
         count
       }

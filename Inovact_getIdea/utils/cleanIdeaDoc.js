@@ -1,5 +1,6 @@
 function cleanIdeaDoc(ideaDoc) {
   ideaDoc.idea_likes = ideaDoc.idea_likes.result.count;
+  ideaDoc.has_liked = ideaDoc.has_liked.result.count == 1 ? true : false;
 
   return {
     ...ideaDoc,
