@@ -38,5 +38,11 @@ exports.handler = async (events, context, callback) => {
 
   if (!response.success) return callback(null, response.errors);
 
-  callback(null, response.result);
+  if (article_type == 'post') {
+    callback(null, response.result.data.insert_project_comment[0]);
+  } else if (article_type == 'idea') {
+    callback(null, response.result.data.insert_idea_comment[0]);
+  } else {
+    callback(null, response.result.data.insert_thought_comments[0]);
+  }
 };
