@@ -21,9 +21,17 @@ exports.handler = async (events, context, callback) => {
         data: null,
       });
 
+    if (response1.result.data.thoughts.length == 0) {
+      return callback(null, {
+        success: false,
+        errorCode: 'NotFound',
+        errorMessage: 'Thought not found',
+        data: null,
+      });
+    }
     const cleanedThoughts = response1.result.data.thoughts.map(cleanThoughtDoc);
 
-    callback(null, cleanedThoughts);
+    callback(null, cleanedThoughts[0]);
   } else {
     const variables = {
       cognito_sub: events.cognito_sub,

@@ -23,7 +23,7 @@ exports.handler = async (events, context, callback) => {
 
     const cleanedPosts = response1.result.data.project.map(cleanPostDoc);
 
-    callback(null, cleanedPosts);
+    callback(null, cleanedPosts[0]);
   } else {
     const variables = {
       cognito_sub: events.cognito_sub,
