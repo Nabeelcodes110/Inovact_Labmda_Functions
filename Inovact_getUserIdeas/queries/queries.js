@@ -1,4 +1,4 @@
-const getUserIdeas = `query getIdeas($user_id: Int) {
+const getUserIdeas = `query getIdeas($user_id: Int, $cognito_sub: String) {
   idea(where: {user_id: {_eq: $user_id}}) {
     id
     title
@@ -16,6 +16,11 @@ const getUserIdeas = `query getIdeas($user_id: Int) {
       looking_for_mentors
     }
     idea_likes: idea_likes_aggregate {
+      result: aggregate {
+        count
+      }
+    }
+    has_liked: idea_likes_aggregate (where: { user: { cognito_sub: {_eq: $cognito_sub}}}) {
       result: aggregate {
         count
       }

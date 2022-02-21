@@ -1,4 +1,4 @@
-const getUserPosts = `query getProjects($user_id: Int) {
+const getUserPosts = `query getProjects($user_id: Int, $cognito_sub: String) {
   project(where: { user_id: { _eq: $user_id }}) {
     id
     title
@@ -9,6 +9,11 @@ const getUserPosts = `query getProjects($user_id: Int) {
       }
     }
     project_likes: project_likes_aggregate {
+      result: aggregate {
+        count
+      }
+    }
+    has_liked: project_likes_aggregate (where: { user: { cognito_sub: {_eq: $cognito_sub}}}) {
       result: aggregate {
         count
       }

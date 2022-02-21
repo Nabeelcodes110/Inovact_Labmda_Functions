@@ -13,13 +13,20 @@ exports.handler = async (events, context, callback) => {
     });
 
     // If failed to find user return error
-    if (!response1.success) return callback(null, response1.errors);
+    if (!response1.success)
+      return callback(null, {
+        success: false,
+        errorCode: 'InternalServerError',
+        errorMessage: JSON.stringify(response1.errors),
+        data: null,
+      });
 
     user_id = response1.result.data.user[0].id;
   }
 
   const variables = {
     user_id,
+    cognito_sub: events.cognito_sub,
   };
 
   const response1 = await Hasura(getUserPosts, variables);
