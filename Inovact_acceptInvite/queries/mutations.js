@@ -1,21 +1,15 @@
-const addMembers = `mutation addMembers($objects: [team_members_insert_input!]!) {
-  insert_team_members(objects: $objects) {
-    returning {
-      user_id
-      team_id
-      admin
-      joined_date
-    }
+const acceptInvite = `mutation acceptInvite($team_id: Int, $user_id: Int, $invitation_id: Int) {
+  delete_team_invitations(where: {id: {_eq: $invitation_id}}) {
+    affected_rows
+  }
+  insert_team_members(objects: [{
+    team_id: $team_id,
+    user_id: $user_id
+  }]) {
+    affected_rows
   }
 }`;
 
-const deleteInvitation = `mutation deleteInvitation($id: Int) {
-  delete_team_invitations(where: {id: {_eq: $id}}) {
-    affected_rows
-  }
-}
-`;
-
 module.exports = {
-  deleteInvitation,
+  acceptInvite,
 };

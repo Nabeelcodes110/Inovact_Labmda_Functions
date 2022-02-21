@@ -1,21 +1,37 @@
 const { query: Hasura } = require('./utils/hasura');
-const { getInvitationDetails } = require('./queries/queries');
-const { deleteInvitation } = require('./queries/mutations');
+const { rejectInvite } = require('./queries/mutations');
 
 exports.handler = async (events, context, callback) => {
   const invitation_id = events.invitation_id;
   const cognito_sub = events.cognito_sub;
 
-  const response2 = await Hasura(getInvitationDetails, { id: invitation_id });
+  const variables = {
+    invitation_id,
+    cognito_sub,
+  };
 
-  if (!response2.success) return callback(null, response2.errors);
+  const response = await Hasura(rejectInvite, variables);
 
-  if (response2.result.data.team_invitations[0].user.cognito_sub != cognito_sub)
-    return callback('You cant reject invites sent to others');
+  if (!response.success)
+    return callback(null, {
+      success: false,
+      errorCode: 'InternalServerError',
+      errorMessage: JSON.stringify(response.errors),
+      data: null,
+    });
 
-  const response4 = await Hasura(deleteInvitation, { id: invitation_id });
+  if (response.result.data.delete_team_invitations.affected_rows === 0)
+    return callback(null, {
+      success: false,
+      errorCode: 'NotFound',
+      errorMessage: 'Invitation not found',
+      data: null,
+    });
 
-  if (!response4.success) return callback(null, response4.errors);
-
-  callback(null, response4.result);
+  callback(null, {
+    success: true,
+    errorCode: '',
+    errorMessage: '',
+    data: null,
+  });
 };
