@@ -54,21 +54,45 @@ exports.handler = async (events, context, callback) => {
       success: true,
       errorCode: '',
       errorMessage: '',
-      data: response.result.data.insert_project_comment.returning[0],
+      data: response.result.data.insert_project_comment.returning.map(doc => {
+        return {
+          user_id: doc.user_id,
+          text: doc.text,
+          created_at: doc.created_at,
+          updated_at: doc.updated_at,
+          id: doc.project_id,
+        };
+      })[0],
     });
   } else if (article_type == 'idea') {
     callback(null, {
       success: true,
       errorCode: '',
       errorMessage: '',
-      data: response.result.data.insert_idea_comment.returning[0],
+      data: response.result.data.insert_idea_comment.returning.map(doc => {
+        return {
+          id: doc.idea_id,
+          user_id: doc.user_id,
+          text: doc.text,
+          created_at: doc.created_at,
+          updated_at: doc.updated_at,
+        };
+      })[0],
     });
   } else {
     callback(null, {
       success: true,
       errorCode: '',
       errorMessage: '',
-      data: response.result.data.insert_thought_comments.returning[0],
+      data: response.result.data.insert_thought_comments.returning.map(doc => {
+        return {
+          user_id: doc.user_id,
+          text: doc.text,
+          created_at: doc.created_at,
+          updated_at: doc.updated_at,
+          id: doc.thought_id,
+        };
+      })[0],
     });
   }
 };
