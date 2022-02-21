@@ -1,20 +1,16 @@
-const getUserTeams = `query getMyTeams($user_id: Int) {
-  team(where: { team_members: { user_id: { _eq: $user_id }}}) {
+const getUserTeams = `query getMyTeams($cognito_sub: String) {
+  team(where: { team_members: {user: {cognito_sub: {_eq: $cognito_sub}}}}) {
     id
     name
     avatar
     looking_for_members
     looking_for_mentors
     team_role_requirements {
-      role {
-        id
-        name
-      }
+      id
+      role_name
       team_skill_requirements {
-        skill {
-          id
-          name
-        }
+        id
+        skill_name
       }
     }
     team_invitations {
@@ -83,15 +79,11 @@ const getTeam = `query getTeam($team_id: Int) {
     looking_for_members
     looking_for_mentors
     team_role_requirements {
-      role {
-        id
-        name
-      }
+      id
+      role_name
       team_skill_requirements {
-        skill {
-          id
-          name
-        }
+        id
+        skill_name
       }
     }
     team_invitations {
@@ -150,15 +142,7 @@ const getTeam = `query getTeam($team_id: Int) {
   }
 }`;
 
-const getUserId = `query getUser($cognito_sub: String_comparison_exp) {
-  user(where: { cognito_sub: $cognito_sub }) {
-    id
-  }
-}
-`;
-
 module.exports = {
   getUserTeams,
-  getUserId,
   getTeam,
 };

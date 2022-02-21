@@ -1,36 +1,48 @@
 const { query: Hasura } = require('./utils/hasura');
-const { getUserTeams, getUserId, getTeam } = require('./queries/queries');
+const { getUserTeams, getTeam } = require('./queries/queries');
 
 exports.handler = async (events, context, callback) => {
   const team_id = events.team_id;
 
+  let query;
+  let variables = {};
+
+  // Choose the varialbes and query based on the team_id
   if (team_id) {
-    const variables = {
+    variables = {
       team_id,
     };
-
-    const response1 = await Hasura(getTeam, variables);
-
-    if (!response1.success) return callback(null, response1.errors);
-
-    callback(null, response1.result);
+    query = getTeam;
   } else {
-    // Find user id
-    const cognito_sub = events.cognito_sub;
-    const response1 = await Hasura(getUserId, {
-      cognito_sub: { _eq: cognito_sub },
+    variables = {
+      cognito_sub: events.cognito_sub,
+    };
+    query = getUserTeams;
+  }
+
+  // Run the query
+  const response = await Hasura(query, variables);
+
+  if (!response.success)
+    return callback(null, {
+      success: false,
+      errorCode: 'InternalServerError',
+      errorMessage: JSON.stringify(response.errors),
+      data: null,
     });
 
-    if (!response1.success) return callback(null, response1.errors);
-
-    const variables = {
-      user_id: response1.result.data.user[0].id,
-    };
-
-    const response2 = await Hasura(getUserTeams, variables);
-
-    if (!response2.success) return callback(null, response2.errors);
-
-    callback(null, response2.result);
+  if (team_id) {
+    if (response.result.data.team.length == 0) {
+      callback(null, {
+        success: false,
+        errorCode: 'NotFound',
+        errorMessage: 'Team not found',
+        data: null,
+      });
+    } else {
+      callback(null, response.result.data.team[0]);
+    }
+  } else {
+    callback(null, response.result.data.team);
   }
 };
