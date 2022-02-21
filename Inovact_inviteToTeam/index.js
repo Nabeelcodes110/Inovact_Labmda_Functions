@@ -1,9 +1,5 @@
 const { query: Hasura } = require('./utils/hasura');
-const {
-  checkTeamMember,
-  checkIfAdmin,
-  checkIfAlreadyInvited,
-} = require('./queries/queries.js');
+const { possibleToInviteUser } = require('./queries/queries.js');
 const { addTeamInvite } = require('./queries/mutations');
 
 exports.handler = async (events, context, callback) => {
@@ -11,36 +7,69 @@ exports.handler = async (events, context, callback) => {
   const user_id = events.user_id;
   const cognito_sub = events.cognito_sub;
 
-  const response = await Hasura(checkIfAlreadyInvited, { team_id, user_id });
+  const variables = {
+    team_id,
+    user_id,
+    cognito_sub,
+  };
 
-  if (!response.success) return callback(null, response.errors);
-  if (response.result.data.team_invitations.length != 0)
-    return callback('Invite has already been sent');
+  /* Verify if it is possible to invite the user
+   * 1. Check if the current user is the team admin
+   * 2. Check if the user is already in the team
+   * 3. Check if the user is already invited to the team
+   */
+  const response = await Hasura(possibleToInviteUser, variables);
 
-  const response1 = await Hasura(checkIfAdmin, { cognito_sub, team_id });
-
-  if (!response1.success) return callback(null, response1.errors);
-
-  if (
-    response1.result.data.team_members.length == 0 ||
-    !response1.result.data.team_members[0].admin
-  )
-    return callback(
-      "Only admins can invite users to the team, or team doesn't exist"
-    );
-
-  const response2 = await Hasura(checkTeamMember, { team_id, user_id });
-
-  if (!response2.success) return callback(null, response2.errors);
-
-  if (response2.result.data.team_members.length)
-    return callback({
-      message: 'User already a member of the team',
+  if (!response.success)
+    return callback(null, {
+      success: false,
+      errorCode: 'InternalServerError',
+      errorMessage: JSON.stringify(response.errors),
+      data: null,
     });
 
-  const response3 = await Hasura(addTeamInvite, { team_id, user_id });
+  if (
+    response.result.data.current_user.length == 0 ||
+    !response.result.data.current_user[0].admin
+  )
+    return callback(null, {
+      success: false,
+      errorCode: 'Forbidden',
+      errorMessage: 'You are not the admin of this team',
+      data: null,
+    });
 
-  if (!response3.success) return callback(null, response3.errors);
+  if (response.result.data.team_members.length > 0)
+    return callback(null, {
+      success: false,
+      errorCode: 'Forbidden',
+      errorMessage: 'This user is already in the team',
+      data: null,
+    });
 
-  callback(null, response3.result);
+  if (response.result.data.team_invitations.length > 0)
+    return callback(null, {
+      success: false,
+      errorCode: 'Forbidden',
+      errorMessage: 'This user is already invited to this team',
+      data: null,
+    });
+
+  /* Add the user to the team */
+  const response1 = await Hasura(addTeamInvite, { team_id, user_id });
+
+  if (!response1.success)
+    return callback(null, {
+      success: false,
+      errorCode: 'InternalServerError',
+      errorMessage: JSON.stringify(response1.errors),
+      data: null,
+    });
+
+  callback(null, {
+    success: true,
+    errorCode: '',
+    errorMessage: '',
+    data: null,
+  });
 };
