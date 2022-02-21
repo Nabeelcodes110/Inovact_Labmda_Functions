@@ -26,7 +26,7 @@ const addIdea = `mutation add_idea($description: String!, $title:String!, $user_
 
 const addTags = `mutation addIdea($objects: [idea_tag_insert_input!]!) {
   insert_idea_tag(objects: $objects) {
-    affecected_rows
+    affected_rows
   }
 }`;
 
