@@ -1,36 +1,65 @@
 const { query: Hasura } = require('./utils/hasura');
-const { checkIfAdmin, getRequestDetails } = require('./queries/queries');
-const { addMembers, deleteJoinRequest } = require('./queries/mutations');
+const { checkIfPossibleToAccept } = require('./queries/queries');
+const { acceptJoinRequest } = require('./queries/mutations');
 
 exports.handler = async (events, context, callback) => {
   const request_id = events.request_id;
   const cognito_sub = events.cognito_sub;
 
-  const response1 = await Hasura(checkIfAdmin, { cognito_sub, request_id });
-
-  if (!response1.success) return callback(null, response1.errors);
-
-  if (!response1.result.data.team_members[0].admin)
-    return callback({ message: 'Only admins can accept requests' });
-
-  const response2 = await Hasura(getRequestDetails, { id: request_id });
-
-  if (!response2.success) return callback(null, response2.errors);
-
-  const memberData = {
-    objects: [
-      {
-        user_id: response2.result.data.team_requests[0].user_id,
-        team_id: response2.result.data.team_requests[0].team_id,
-      },
-    ],
+  const variables = {
+    request_id,
+    cognito_sub,
   };
 
-  const response3 = await Hasura(addMembers, memberData);
+  const response1 = await Hasura(checkIfPossibleToAccept, variables);
 
-  if (!response3.success) return callback(null, response3.errors);
+  if (!response1.success)
+    return callback(null, {
+      success: false,
+      errorCode: 'InternalServerError',
+      errorMessage: JSON.stringify(response1.errors),
+      data: null,
+    });
 
-  const response4 = await Hasura(deleteJoinRequest, { id: request_id });
+  if (response1.result.data.team_requests.length == 0)
+    return callback(null, {
+      success: false,
+      errorCode: 'InvalidRequest',
+      errorMessage: 'Request not found',
+      data: null,
+    });
 
-  callback(null, response3.result);
+  if (
+    response1.result.data.team_members.length == 0 ||
+    !response1.result.data.team_members[0].admin
+  )
+    return callback(null, {
+      success: false,
+      errorCode: 'Forbidden',
+      errorMessage: 'You are not an admin of this team',
+      data: null,
+    });
+
+  const variables2 = {
+    team_id: response1.result.data.team_requests[0].team_id,
+    user_id: response1.result.data.team_requests[0].user_id,
+    request_id,
+  };
+
+  const response2 = await Hasura(acceptJoinRequest, variables2);
+
+  if (!response2.success)
+    return callback(null, {
+      success: false,
+      errorCode: 'InternalServerError',
+      errorMessage: JSON.stringify(response2.errors),
+      data: null,
+    });
+
+  callback(null, {
+    success: true,
+    errorCode: '',
+    errorMessage: '',
+    data: null,
+  });
 };

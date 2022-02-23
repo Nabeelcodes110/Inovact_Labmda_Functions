@@ -17,6 +17,7 @@ exports.handler = async (events, context, callback) => {
    * 1. Check if the current user is the team admin
    * 2. Check if the user is already in the team
    * 3. Check if the user is already invited to the team
+   * 4. Check if the user has requested to join the team
    */
   const response = await Hasura(possibleToInviteUser, variables);
 
@@ -52,6 +53,15 @@ exports.handler = async (events, context, callback) => {
       success: false,
       errorCode: 'Forbidden',
       errorMessage: 'This user is already invited to this team',
+      data: null,
+    });
+
+  if (response.result.data.team_requests.length > 0)
+    return callback(null, {
+      success: false,
+      errorCode: 'Forbidden',
+      errorMessage:
+        'This user has requested to join this team, please accept or reject the request instead of inviting the user',
       data: null,
     });
 
