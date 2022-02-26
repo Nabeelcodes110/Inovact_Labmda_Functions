@@ -1,0 +1,15 @@
+{
+  "name": "inovact_sendprivatemessage",
+  "version": "1.0.0",
+  "description": "Lambda function to handle a new message",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "D G Shivu",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-crypto/client-node": "^3.1.0",
+    "axios": "^0.26.0"
+  }
+}
