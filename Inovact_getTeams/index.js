@@ -1,5 +1,6 @@
 const { query: Hasura } = require('./utils/hasura');
 const { getUserTeams, getTeam } = require('./queries/queries');
+const { cleanTeamDocs } = require('./utils/cleanTeamDocs');
 
 exports.handler = async (events, context, callback) => {
   const team_id = events.team_id;
@@ -40,9 +41,13 @@ exports.handler = async (events, context, callback) => {
         data: null,
       });
     } else {
-      callback(null, response.result.data.team[0]);
+      const cleanedTeamDoc = cleanTeamDocs(response.result.data.team[0]);
+
+      callback(null, cleanedTeamDoc);
     }
   } else {
-    callback(null, response.result.data.team);
+    const cleanedTeamDocs = response.result.data.team.map(cleanTeamDocs);
+
+    callback(null, cleanedTeamDocs);
   }
 };
