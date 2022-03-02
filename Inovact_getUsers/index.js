@@ -41,7 +41,7 @@ exports.handler = (events, context, callback) => {
       }
     )
     .then(res => {
-      callback(null, res.data);
+      callback(null, res.data.data.user);
     })
     .catch(err => {
       callback(err);
