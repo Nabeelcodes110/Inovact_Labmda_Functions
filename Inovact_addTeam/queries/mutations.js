@@ -1,9 +1,8 @@
-const addTeam = `mutation addTeam($name: String, $looking_for_members: Boolean, $looking_for_mentor: Boolean, $avatar: String) {
+const addTeam = `mutation addTeam($name: String, $avatar: String, $description: String) {
   insert_team(objects: [{
     name: $name,
-    looking_for_members: $looking_for_members,
-    looking_for_mentors: $looking_for_mentor,
-    avatar: $avatar
+    avatar: $avatar,
+    description: $description
   }]) {
     returning {
       id
@@ -43,10 +42,7 @@ const addMembers = `mutation addMembers($objects: [team_members_insert_input!]!)
 
 const addTeamTags = `mutation addTeamTags($objects: [team_tag_insert_input!]!) {
   insert_team_tag(objects: $objects) {
-    returning {
-      team_id
-      tag_id
-    }
+    affected_rows
   }
 }`;
 
