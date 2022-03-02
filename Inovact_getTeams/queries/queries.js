@@ -2,6 +2,7 @@ const getUserTeams = `query getMyTeams($cognito_sub: String) {
   team(where: { team_members: {user: {cognito_sub: {_eq: $cognito_sub}}}}) {
     id
     name
+    description
     avatar
     looking_for_members
     looking_for_mentors
@@ -75,6 +76,7 @@ const getTeam = `query getTeam($team_id: Int) {
   team(where: {id: { _eq: $team_id }}) {
     id
     name
+    description
     avatar
     looking_for_members
     looking_for_mentors
