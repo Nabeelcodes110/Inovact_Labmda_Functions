@@ -15,6 +15,7 @@ exports.handler = async (events, context, callback) => {
   const variables = {
     user2: response1.result.data.user[0].id,
     user1: user_id,
+    formedAt: new Date().toISOString(),
   };
 
   const response2 = await Hasura(getPendingConnection, variables);
