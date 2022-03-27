@@ -1,5 +1,5 @@
 const { query: Hasura } = require('./utils/hasura');
-const { addIdea, addTags } = require('./queries/mutations');
+const { addIdea, addTags, addSkillsRequired, addRolesRequired } = require('./queries/mutations');
 const { getUser, getIdea } = require('./queries/queries');
 const createDefaultTeam = require('./utils/createDefaultTeam');
 const cleanIdeaDoc = require('./utils/cleanIdeaDoc');
@@ -52,6 +52,33 @@ exports.handler = async (events, context, callback) => {
       errorCode: 'InternalServerError',
       errorMessage: 'Failed to save idea',
     });
+
+  role_if: if (events.roles_required.length > 0) {
+    const roles_data = events.roles_required.map(ele => {
+      return {
+        team_id: ideaData.team_id,
+        role_name: ele.role_name,
+      };
+    });
+
+    const response1 = await Hasura(addRolesRequired, { objects: roles_data });
+
+    if (!response1.success) break role_if;
+
+    let skills_data = [];
+
+    for (const i in events.roles_required) {
+      for (const skill of events.roles_required[i].skills_required) {
+        skills_data.push({
+          role_requirement_id:
+            response1.result.data.insert_team_role_requirements.returning[i].id,
+          skill_name: skill,
+        });
+      }
+    }
+
+    const response2 = await Hasura(addSkillsRequired, { objects: skills_data });
+  }
 
   // Insert tags
   if (events.idea_tags.length) {
