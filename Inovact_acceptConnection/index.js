@@ -12,26 +12,27 @@ exports.handler = async (events, context, callback) => {
   });
 
   // Fetch connection
-  const variables = {
+  let variables = {
     user2: response1.result.data.user[0].id,
-    user1: user_id,
-    formedAt: new Date().toISOString(),
+    user1: user_id
   };
 
   const response2 = await Hasura(getPendingConnection, variables);
 
   if (!response2.success)
-    callback(null, {
+    return callback(null, {
       success: false,
       errorCode: 'InternalServerError',
       errorMessage: JSON.stringify(response2.errors),
       data: null,
     });
 
+  variables['formedAt'] = new Date().toISOString()
+
   const response3 = await Hasura(acceptConnection, variables);
 
   if (!response3.success)
-    callback(null, {
+    return callback(null, {
       success: false,
       errorCode: 'InternalServerError',
       errorMessage: JSON.stringify(response3.errors),
