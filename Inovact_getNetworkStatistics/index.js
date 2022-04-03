@@ -29,7 +29,7 @@ exports.handler = async (events, context, callback) => {
   const todaysConnections =
     response.result.data.connections_till_today_morning.aggregate.count;
 
-  const percentageGrowth =
+  const percentageGrowth = yesterdaysConnections == 0 ? 100 : 
     ((todaysConnections - yesterdaysConnections) / yesterdaysConnections) * 100;
 
   const statistics = {
