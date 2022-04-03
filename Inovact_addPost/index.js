@@ -35,20 +35,26 @@ exports.handler = async (events, context, callback) => {
     completed: events.completed,
   };
 
+  let teamCreated;
+
   // Create a default team
-  const teamCreated = await createDefaultTeam(
-    response1.result.data.user[0].id,
-    events.team_name ? events.team_name : events.title + ' team',
-    events.looking_for_mentors,
-    events.looking_for_members,
-    events.team_on_inovact
-  );
+  if (events.looking_for_members == 'true') {
+    teamCreated = await createDefaultTeam(
+      response1.result.data.user[0].id,
+      events.team_name ? events.team_name : events.title + ' team',
+      events.looking_for_mentors,
+      events.looking_for_members,
+      events.team_on_inovact
+    );
 
-  if (!teamCreated.success) {
-    return callback(null, teamCreated);
+    if (!teamCreated.success) {
+      return callback(null, teamCreated);
+    }
+
+    projectData.team_id = teamCreated.team_id;
+  } else {
+    projectData.team_id = null;
   }
-
-  projectData.team_id = teamCreated.team_id;
 
   const response2 = await Hasura(addProject, projectData);
 
@@ -62,7 +68,7 @@ exports.handler = async (events, context, callback) => {
     });
 
   // Insert roles required and skills required
-  role_if: if (events.roles_required.length > 0) {
+  role_if: if (events.looking_for_members == 'true' && events.roles_required.length > 0) {
     const roles_data = events.roles_required.map(ele => {
       return {
         team_id: teamCreated.team_id,
