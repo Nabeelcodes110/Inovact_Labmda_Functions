@@ -1,9 +1,30 @@
 const cleanIdeaDoc = require('./utils/cleanIdeaDoc');
 const { query: Hasura } = require('./utils/hasura');
-const { getIdea, getIdeas } = require('./queries/queries');
+const { getIdea, getIdeas, getConnections } = require('./queries/queries');
 
 exports.handler = async (events, context, callback) => {
   const id = await events.id;
+
+  const response = await Hasura(getConnections, { cognito_sub: events.cognito_sub });
+
+  if (!response.success) {
+    return callback(null, {
+      success: false,
+      errorCode: 'InternalServerError',
+      errorMessage: 'Failed to find login user',
+      data: null,
+    });
+  }
+
+  const userId = response.result.data.user[0].id;
+
+  const connections = response.result.data.connections.map(doc => {
+    if (doc.user1 === userId) {
+      return doc.user2;
+    } else {
+      return doc.user1;
+    }
+  });
 
   if (id) {
     const variables = {
@@ -21,7 +42,11 @@ exports.handler = async (events, context, callback) => {
         data: null,
       });
 
-    const cleanedIdeas = response1.result.data.idea.map(cleanIdeaDoc);
+    const cleanedIdeas = response1.result.data.idea.map(doc => {
+      doc = cleanIdeaDoc(doc);
+      doc.has_connected = connections.includes(doc.user.id);
+      return doc;
+    });
 
     callback(null, cleanedIdeas[0]);
   } else {
@@ -32,7 +57,11 @@ exports.handler = async (events, context, callback) => {
     const response = await Hasura(getIdeas, variables);
 
     if (response.success) {
-      const cleanedIdeas = response.result.data.idea.map(cleanIdeaDoc);
+      const cleanedIdeas = response.result.data.idea.map(doc => {
+        doc = cleanIdeaDoc(doc);
+        doc.has_connected = connections.includes(doc.user.id);
+        return doc;
+      });
 
       callback(null, cleanedIdeas);
     } else {

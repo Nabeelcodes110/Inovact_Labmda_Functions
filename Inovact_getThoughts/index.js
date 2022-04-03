@@ -1,10 +1,31 @@
 const cleanThoughtDoc = require('./utils/cleanThoughtDoc');
 const { query: Hasura } = require('./utils/hasura');
-const { getThought, getThoughts } = require('./queries/queries');
+const { getThought, getThoughts, getConnections } = require('./queries/queries');
 
 exports.handler = async (events, context, callback) => {
   const id = await events.id;
 
+  const response = await Hasura(getConnections, { cognito_sub: events.cognito_sub });
+
+  if (!response.success) {
+    return callback(null, {
+      success: false,
+      errorCode: 'InternalServerError',
+      errorMessage: 'Failed to find login user',
+      data: null,
+    });
+  }
+
+  const userId = response.result.data.user[0].id;
+
+  const connections = response.result.data.connections.map(doc => {
+    if (doc.user1 === userId) {
+      return doc.user2;
+    } else {
+      return doc.user1;
+    }
+  });
+  
   if (id) {
     const variables = {
       id,
@@ -29,7 +50,11 @@ exports.handler = async (events, context, callback) => {
         data: null,
       });
     }
-    const cleanedThoughts = response1.result.data.thoughts.map(cleanThoughtDoc);
+    const cleanedThoughts = response1.result.data.thoughts.map(doc => {
+      doc = cleanThoughtDoc(doc);
+      doc.has_connected = connections.includes(doc.user.id);
+      return doc;
+    });
 
     callback(null, cleanedThoughts[0]);
   } else {
@@ -48,7 +73,11 @@ exports.handler = async (events, context, callback) => {
       });
     }
 
-    const cleanedThoughts = response.result.data.thoughts.map(cleanThoughtDoc);
+    const cleanedThoughts = response.result.data.thoughts.map(doc => {
+      doc = cleanThoughtDoc(doc);
+      doc.has_connected = connections.includes(doc.user.id);
+      return doc;
+    });
 
     callback(null, cleanedThoughts);
   }
