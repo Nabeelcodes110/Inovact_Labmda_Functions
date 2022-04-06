@@ -1,5 +1,5 @@
 const { query: Hasura } = require('./utils/hasura');
-const { checkIfPossibleToAccept } = require('./queries/queries');
+const { checkIfPossibleToAccept, getRoleRequirement } = require('./queries/queries');
 const { acceptJoinRequest } = require('./queries/mutations');
 
 exports.handler = async (events, context, callback) => {
@@ -40,19 +40,30 @@ exports.handler = async (events, context, callback) => {
       data: null,
     });
 
+  const response2 = await Hasura(getRoleRequirement, { roleRequirementId: response1.result.data.team_requests[0].role_requirement_id })
+
+  if (!response2.success) return callback(null, {
+    success: false,
+    errorCode: "InternalServerError",
+    errorMessage: "Failed to get role requirement details",
+    data: null
+  })
+
   const variables2 = {
     team_id: response1.result.data.team_requests[0].team_id,
     user_id: response1.result.data.team_requests[0].user_id,
+    role: response2.result.data.team_role_requirements[0].role_name,
+    role_requirement_id: response1.result.data.team_requests[0].role_requirement_id,
     request_id,
   };
 
-  const response2 = await Hasura(acceptJoinRequest, variables2);
+  const response3 = await Hasura(acceptJoinRequest, variables2);
 
-  if (!response2.success)
+  if (!response3.success)
     return callback(null, {
       success: false,
       errorCode: 'InternalServerError',
-      errorMessage: JSON.stringify(response2.errors),
+      errorMessage: JSON.stringify(response3.errors),
       data: null,
     });
 

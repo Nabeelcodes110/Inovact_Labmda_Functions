@@ -4,6 +4,7 @@ const { addTeamRequest } = require('./queries/mutations');
 
 exports.handler = async (events, context, callback) => {
   const team_id = events.team_id;
+  const roleRequirementId = events.role_requirement_id;
   const cognito_sub = events.cognito_sub;
 
   const variables = {
@@ -51,7 +52,7 @@ exports.handler = async (events, context, callback) => {
 
   const user_id = response.result.data.user[0].id;
 
-  const response1 = await Hasura(addTeamRequest, { team_id, user_id });
+  const response1 = await Hasura(addTeamRequest, { team_id, roleRequirementId, user_id });
 
   if (!response1.success)
     return callback(null, {
