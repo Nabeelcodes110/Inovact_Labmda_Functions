@@ -111,6 +111,7 @@ const getConnections = `query getConnections($cognito_sub: String) {
   }) {
     user1
     user2
+    status
   }
   user (where: {cognito_sub: {_eq: $cognito_sub}}) {
     id

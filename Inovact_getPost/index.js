@@ -18,11 +18,12 @@ exports.handler = async (events, context, callback) => {
 
   const userId = response.result.data.user[0].id;
 
-  const connections = response.result.data.connections.map(doc => {
+  const connections = {};
+  response.result.data.connections.forEach(doc => {
     if (doc.user1 === userId) {
-      return doc.user2;
+      connections[doc.user2] = doc.status;
     } else {
-      return doc.user1;
+      connections[doc.user1] = doc.status;
     }
   });
 
@@ -53,7 +54,7 @@ exports.handler = async (events, context, callback) => {
 
     const cleanedPosts = response1.result.data.project.map(doc => {
       doc = cleanPostDoc(doc);
-      doc.has_connected = connections.includes(doc.user.id);
+      doc.connections_status = connections[doc.user.id] ? connections[doc.user.id] : "not connected";
       return doc;
     });
 
@@ -68,7 +69,7 @@ exports.handler = async (events, context, callback) => {
     if (response.success) {
       const cleanedPosts = response.result.data.project.map(doc => {
         doc = cleanPostDoc(doc);
-        doc.has_connected = connections.includes(doc.user.id);
+        doc.connections_status = connections[doc.user.id] ? connections[doc.user.id] : "not connected";
         return doc;
       });
 
