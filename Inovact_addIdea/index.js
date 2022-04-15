@@ -1,5 +1,10 @@
 const { query: Hasura } = require('./utils/hasura');
-const { addIdea, addTags, addSkillsRequired, addRolesRequired } = require('./queries/mutations');
+const {
+  addIdea,
+  addTags,
+  addSkillsRequired,
+  addRolesRequired,
+} = require('./queries/mutations');
 const { getUser, getIdea } = require('./queries/queries');
 const createDefaultTeam = require('./utils/createDefaultTeam');
 const cleanIdeaDoc = require('./utils/cleanIdeaDoc');
@@ -25,8 +30,13 @@ exports.handler = async (events, context, callback) => {
     user_id: response1.result.data.user[0].id,
   };
 
-  if (!events.team_id) {
-    const teamCreated = await createDefaultTeam(
+  let teamCreated;
+
+  // Create a default team
+  if (events.team_id) {
+    ideaData.team_id = events.team_id;
+  } else if (events.looking_for_members == 'true') {
+    teamCreated = await createDefaultTeam(
       response1.result.data.user[0].id,
       events.title,
       events.looking_for_mentors,
@@ -40,7 +50,7 @@ exports.handler = async (events, context, callback) => {
 
     ideaData.team_id = teamCreated.team_id;
   } else {
-    ideaData.team_id = events.team_id;
+    ideaData.team_id = null;
   }
 
   const response2 = await Hasura(addIdea, ideaData);
@@ -53,7 +63,7 @@ exports.handler = async (events, context, callback) => {
       errorMessage: 'Failed to save idea',
     });
 
-  role_if: if (events.roles_required.length > 0) {
+  role_if: if (ideaData.team_id && events.roles_required.length > 0) {
     const roles_data = events.roles_required.map(ele => {
       return {
         team_id: ideaData.team_id,

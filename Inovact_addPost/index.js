@@ -38,7 +38,9 @@ exports.handler = async (events, context, callback) => {
   let teamCreated;
 
   // Create a default team
-  if (events.looking_for_members == 'true') {
+  if (events.team_id) {
+    projectData.team_id = events.team_id;
+  } else if (events.looking_for_members == 'true') {
     teamCreated = await createDefaultTeam(
       response1.result.data.user[0].id,
       events.team_name ? events.team_name : events.title + ' team',
@@ -68,10 +70,14 @@ exports.handler = async (events, context, callback) => {
     });
 
   // Insert roles required and skills required
-  role_if: if (events.looking_for_members == 'true' && events.roles_required.length > 0) {
+  role_if: if (
+    events.looking_for_members == 'true' &&
+    events.roles_required.length > 0 &&
+    projectData.team_id
+  ) {
     const roles_data = events.roles_required.map(ele => {
       return {
-        team_id: teamCreated.team_id,
+        team_id: projectData.team_id,
         role_name: ele.role_name,
       };
     });
