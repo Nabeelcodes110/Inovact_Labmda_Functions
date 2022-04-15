@@ -33,6 +33,10 @@ const getUserTeams = `query getMyTeams($cognito_sub: String) {
         avatar
         role
       }
+      team_role_requirement {
+        id
+        role_name
+      }
       requested_on
     }
     team_members {
@@ -106,6 +110,10 @@ const getTeam = `query getTeam($team_id: Int) {
         last_name
         avatar
         role
+      }
+      team_role_requirement {
+        id
+        role_name
       }
       requested_on
     }
