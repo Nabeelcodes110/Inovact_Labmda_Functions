@@ -5,14 +5,12 @@ async function createDefaultTeam(
   user_id,
   name,
   looking_for_mentors,
-  looking_for_members,
-  avatar
+  looking_for_members
 ) {
   const teamData = {
     name,
     looking_for_members,
     looking_for_mentors,
-    avatar,
   };
 
   const response1 = await Hasura(addTeam, teamData);

@@ -38,10 +38,9 @@ exports.handler = async (events, context, callback) => {
   } else if (events.looking_for_members == 'true') {
     teamCreated = await createDefaultTeam(
       response1.result.data.user[0].id,
-      events.title,
+      events.team_name ? events.team_name : events.title + ' team',
       events.looking_for_mentors,
-      events.looking_for_members,
-      ''
+      events.looking_for_members
     );
 
     if (!teamCreated.success) {

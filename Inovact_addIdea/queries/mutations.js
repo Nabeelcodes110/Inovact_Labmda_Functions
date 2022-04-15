@@ -30,12 +30,11 @@ const addTags = `mutation addIdea($objects: [idea_tag_insert_input!]!) {
   }
 }`;
 
-const addTeam = `mutation addTeam($name: String, $looking_for_members: Boolean, $looking_for_mentors: Boolean, $avatar: String) {
+const addTeam = `mutation addTeam($name: String, $looking_for_members: Boolean, $looking_for_mentors: Boolean) {
   insert_team(objects: [{
     name: $name,
     looking_for_members: $looking_for_members,
-    looking_for_mentors: $looking_for_mentors,
-    avatar: $avatar
+    looking_for_mentors: $looking_for_mentors
   }]) {
     returning {
       id
@@ -75,5 +74,5 @@ module.exports = {
   addTeam,
   addMembers,
   addSkillsRequired,
-  addRolesRequired
+  addRolesRequired,
 };

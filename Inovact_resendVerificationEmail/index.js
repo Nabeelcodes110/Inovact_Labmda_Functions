@@ -24,7 +24,7 @@ exports.handler = async (event, context, callback) => {
       // console.log(err)
       return false;
     });
-
+    console.log(success);
     if (success) {
       callback(null, {
         success: true,
