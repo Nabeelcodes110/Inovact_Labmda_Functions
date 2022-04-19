@@ -40,19 +40,26 @@ exports.handler = async (events, context, callback) => {
     });
 
   if (
-    response.result.data.team.length == 0 ||
-    !response.result.data.team[0].looking_for_members
+    response.result.data.team.length == 0 &&
+    ((response.result.data.user[0].role == 'student' &&
+      !response.result.data.team[0].looking_for_members) ||
+      (['entrepreneur', 'mentor'].includes(response.result.data.user[0].role) &&
+        !response.result.data.team[0].looking_for_mentors))
   )
     return callback(null, {
       success: false,
       errorCode: 'Forbidden',
-      errorMessage: 'This team is not looking for members.',
+      errorMessage: 'This team is not looking for members and/or mentors.',
       data: null,
     });
 
   const user_id = response.result.data.user[0].id;
 
-  const response1 = await Hasura(addTeamRequest, { team_id, roleRequirementId, user_id });
+  const response1 = await Hasura(addTeamRequest, {
+    team_id,
+    roleRequirementId,
+    user_id,
+  });
 
   if (!response1.success)
     return callback(null, {

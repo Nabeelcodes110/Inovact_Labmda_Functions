@@ -11,6 +11,7 @@ const possibleToJoinTeam = `query joinTeam($team_id: Int, $cognito_sub: String) 
   }
   user(where: {cognito_sub: {_eq: $cognito_sub}}) {
     id
+    role
   }
 }`;
 

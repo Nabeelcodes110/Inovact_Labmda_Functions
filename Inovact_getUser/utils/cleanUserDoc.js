@@ -1,4 +1,8 @@
 function cleanUserdoc(userDoc) {
+  const temp = new Date(userDoc['graduation_year']);
+
+  if (!isNaN(temp)) userDoc['graduation_year'] = temp.getFullYear();
+
   return {
     ...userDoc,
     user_interests: userDoc.user_interests.map(user_interest => {
