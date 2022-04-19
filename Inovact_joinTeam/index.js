@@ -30,6 +30,15 @@ exports.handler = async (events, context, callback) => {
       data: null,
     });
 
+  if (response.result.data.team_requests.length > 0)
+    return callback(null, {
+      success: false,
+      errorCode: 'Forbidden',
+      errorMessage:
+        'You have already requested to join this team for this role.',
+      data: null,
+    });
+
   if (response.result.data.team_invitations.length > 0)
     return callback(null, {
       success: false,
