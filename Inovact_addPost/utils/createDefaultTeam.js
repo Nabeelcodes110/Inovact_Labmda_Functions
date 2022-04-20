@@ -10,6 +10,7 @@ async function createDefaultTeam(
 ) {
   const teamData = {
     name,
+    creator_id: user_id,
     looking_for_members,
     looking_for_mentors,
     team_on_inovact,

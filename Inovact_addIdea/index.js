@@ -35,7 +35,7 @@ exports.handler = async (events, context, callback) => {
   // Create a default team
   if (events.team_id) {
     ideaData.team_id = events.team_id;
-  } else if (events.looking_for_members == 'true') {
+  } else if (events.looking_for_members) {
     teamCreated = await createDefaultTeam(
       response1.result.data.user[0].id,
       events.team_name ? events.team_name : events.title + ' team',

@@ -25,9 +25,24 @@ exports.handler = async (event, context, callback) => {
   const tags = event.tags instanceof Array ? event.tags : false;
   const members = event.members instanceof Array ? event.members : false;
 
+  // Find user id
+  const cognito_sub = event.cognito_sub;
+  const response5 = await Hasura(getUserId, {
+    cognito_sub: { _eq: cognito_sub },
+  });
+
+  if (!response5.success)
+    return callback(null, {
+      success: false,
+      errorCode: 'InternalServerError',
+      errorMessage: 'Failed to find login user',
+      data: null,
+    });
+
   // Save team to DB
   const teamData = {
     name,
+    creator_id: response5.result.data.user[0].id,
     description,
     avatar,
   };
@@ -45,20 +60,6 @@ exports.handler = async (event, context, callback) => {
   const team = response1.result.data.insert_team.returning[0];
 
   // Add current user as a member with admin: true
-  // Find user id
-  const cognito_sub = event.cognito_sub;
-  const response5 = await Hasura(getUserId, {
-    cognito_sub: { _eq: cognito_sub },
-  });
-
-  if (!response5.success)
-    return callback(null, {
-      success: false,
-      errorCode: 'InternalServerError',
-      errorMessage: 'Failed to find login user',
-      data: null,
-    });
-
   let memberObjects = {
     objects: [
       {

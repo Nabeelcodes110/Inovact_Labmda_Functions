@@ -70,12 +70,13 @@ const addDocuments = `mutation addDocuments($objects: [project_documents_insert_
   }
 }`;
 
-const addTeam = `mutation addTeam($name: String, $looking_for_members: Boolean, $looking_for_mentors: Boolean, $team_on_inovact: Boolean) {
+const addTeam = `mutation addTeam($name: String, $looking_for_members: Boolean, $looking_for_mentors: Boolean, $team_on_inovact: Boolean, $creator_id: Int) {
   insert_team(objects: [{
     name: $name,
     looking_for_members: $looking_for_members,
     looking_for_mentors: $looking_for_mentors,
-    team_on_inovact: $team_on_inovact
+    team_on_inovact: $team_on_inovact,
+    creator_id: $creator_id
   }]) {
     returning {
       id

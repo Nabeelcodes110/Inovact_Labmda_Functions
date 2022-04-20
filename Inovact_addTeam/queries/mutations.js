@@ -1,8 +1,9 @@
-const addTeam = `mutation addTeam($name: String, $avatar: String, $description: String) {
+const addTeam = `mutation addTeam($name: String, $avatar: String, $description: String, $creator_id: Int) {
   insert_team(objects: [{
     name: $name,
     avatar: $avatar,
-    description: $description
+    description: $description,
+    creator_id: $creator_id
   }]) {
     returning {
       id
