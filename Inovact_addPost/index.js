@@ -70,11 +70,7 @@ exports.handler = async (events, context, callback) => {
     });
 
   // Insert roles required and skills required
-  role_if: if (
-    events.looking_for_members == 'true' &&
-    events.roles_required.length > 0 &&
-    projectData.team_id
-  ) {
+  role_if: if (events.roles_required.length > 0 && projectData.team_id) {
     const roles_data = events.roles_required.map(ele => {
       return {
         team_id: projectData.team_id,

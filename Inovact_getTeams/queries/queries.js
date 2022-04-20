@@ -136,6 +136,7 @@ const getTeam = `query getTeam($team_id: Int) {
       url
     }
     projects {
+      id
       title
       status
     }
