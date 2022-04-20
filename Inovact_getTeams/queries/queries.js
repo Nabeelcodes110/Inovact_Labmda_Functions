@@ -1,5 +1,5 @@
-const getUserTeams = `query getMyTeams($cognito_sub: String) {
-  team(where: { team_members: {user: {cognito_sub: {_eq: $cognito_sub}}}}) {
+const getUserTeams = `query getMyTeams($cognito_sub: String, $admin: Boolean) {
+  team(where: { team_members: {user: {cognito_sub: {_eq: $cognito_sub}}, _or: [{admin: {_eq: true}}, {admin: {_eq: $admin}}]}}) {
     id
     name
     description

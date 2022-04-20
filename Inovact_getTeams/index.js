@@ -10,14 +10,15 @@ exports.handler = async (events, context, callback) => {
 
   // Choose the varialbes and query based on the team_id
   if (team_id) {
-    variables = {
-      team_id,
-    };
+    variables['team_id'] = team_id;
+
     query = getTeam;
   } else {
-    variables = {
-      cognito_sub: events.cognito_sub,
-    };
+    if (events.admin) variables['admin'] = true;
+    else variables['admin'] = false;
+
+    variables['cognito_sub'] = events.cognito_sub;
+
     query = getUserTeams;
   }
 
