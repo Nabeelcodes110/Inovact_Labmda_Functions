@@ -40,7 +40,7 @@ exports.handler = async (events, context, callback) => {
   // Create a default team
   if (events.team_id) {
     projectData.team_id = events.team_id;
-  } else if (events.looking_for_members) {
+  } else if (events.looking_for_members || events.looking_for_mentors) {
     teamCreated = await createDefaultTeam(
       response1.result.data.user[0].id,
       events.team_name ? events.team_name : events.title + ' team',
@@ -65,7 +65,7 @@ exports.handler = async (events, context, callback) => {
     return callback(null, {
       success: false,
       errorCode: 'InternalServerError',
-      errorMessage: 'Failed to save project',
+      errorMessage: JSON.stringify(response2.errors),
       data: null,
     });
 
