@@ -17,7 +17,7 @@ exports.handler = async (event, context, callback) => {
   const avatar =
     typeof event.avatar == 'string' && event.avatar.length != 0
       ? event.avatar
-      : '';
+      : 'https://static.vecteezy.com/system/resources/thumbnails/000/550/535/small/user_icon_007.jpg';
   const description =
     typeof event.description == 'string' && event.description.length != 0
       ? event.description
