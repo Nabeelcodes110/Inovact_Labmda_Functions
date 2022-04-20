@@ -14,6 +14,7 @@ exports.handler = async (events, context, callback) => {
 
   const variables = {
     team_id,
+    role_requirement_id: roleRequirementId,
     cognito_sub,
   };
 
