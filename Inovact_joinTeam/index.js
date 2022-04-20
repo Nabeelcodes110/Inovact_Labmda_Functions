@@ -1,6 +1,11 @@
 const { query: Hasura } = require('./utils/hasura');
 const { possibleToJoinTeam } = require('./queries/queries.js');
-const { addTeamRequest } = require('./queries/mutations');
+const {
+  addTeamRequestByStudent,
+  addTeamRequestByMentor,
+  addTeamRequestByEntrepreneurAsMember,
+  addTeamRequestByEntrepreneurAsMentor,
+} = require('./queries/mutations');
 
 exports.handler = async (events, context, callback) => {
   const team_id = events.team_id;
@@ -19,6 +24,14 @@ exports.handler = async (events, context, callback) => {
       success: false,
       errorCode: 'InternalServerError',
       errorMessage: JSON.stringify(response.errors),
+      data: null,
+    });
+
+  if (response.result.data.team.length == 0)
+    return callback(null, {
+      success: false,
+      errorCode: 'NotFoundError',
+      errorMessage: 'Team not found',
       data: null,
     });
 
@@ -48,27 +61,79 @@ exports.handler = async (events, context, callback) => {
       data: null,
     });
 
-  if (
-    response.result.data.team.length == 0 &&
-    ((response.result.data.user[0].role == 'student' &&
-      !response.result.data.team[0].looking_for_members) ||
-      (['entrepreneur', 'mentor'].includes(response.result.data.user[0].role) &&
-        !response.result.data.team[0].looking_for_mentors))
-  )
-    return callback(null, {
-      success: false,
-      errorCode: 'Forbidden',
-      errorMessage: 'This team is not looking for members and/or mentors.',
-      data: null,
-    });
-
   const user_id = response.result.data.user[0].id;
 
-  const response1 = await Hasura(addTeamRequest, {
-    team_id,
-    roleRequirementId,
-    user_id,
-  });
+  let query;
+  let variables1;
+
+  if (response.result.data.user[0].role == 'student') {
+    if (!response.result.data.team[0].looking_for_members)
+      return callback(null, {
+        success: false,
+        errorCode: 'Forbidden',
+        errorMessage: 'This team is not looking for members',
+        data: null,
+      });
+
+    query = addTeamRequestByStudent;
+
+    variables1 = {
+      team_id,
+      roleRequirementId,
+      user_id,
+    };
+  } else if (response.result.data.user[0].role == 'entrepreneur') {
+    if (response.result.data.team[0].user.role == 'student') {
+      if (!response.result.data.team[0].looking_for_mentors)
+        return callback(null, {
+          success: false,
+          errorCode: 'Forbidden',
+          errorMessage: 'This team is not looking for mentors',
+          data: null,
+        });
+
+      query = addTeamRequestByEntrepreneurAsMentor;
+
+      variables1 = {
+        team_id,
+        user_id,
+      };
+    } else {
+      if (!response.result.data.team[0].looking_members) {
+        return callback(null, {
+          success: false,
+          errorCode: 'Forbidden',
+          errorMessage: 'This team is not looking for members',
+          data: null,
+        });
+      }
+
+      query = addTeamRequestByEntrepreneurAsMember;
+
+      variables1 = {
+        user_id,
+        roleRequirementId,
+        team_id,
+      };
+    }
+  } else {
+    if (!response.result.data.team[0].looking_for_mentors)
+      return callback(null, {
+        success: false,
+        errorCode: 'Forbidden',
+        errorMessage: 'This team is not looking for mentors',
+        data: null,
+      });
+
+    query = addTeamRequestByMentor;
+
+    variables1 = {
+      team_id,
+      user_id,
+    };
+  }
+
+  const response1 = await Hasura(query, variables1);
 
   if (!response1.success)
     return callback(null, {
