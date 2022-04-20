@@ -1,5 +1,5 @@
 const getProjects = `query getProjects($cognito_sub: String) {
-  project {
+  project(order_by: { created_at: desc }) {
     id
     title
     description
@@ -174,5 +174,5 @@ const getConnections = `query getConnections($cognito_sub: String) {
 module.exports = {
   getProjects,
   getProject,
-  getConnections
+  getConnections,
 };
