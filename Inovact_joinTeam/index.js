@@ -14,7 +14,8 @@ exports.handler = async (events, context, callback) => {
 
   const variables = {
     team_id,
-    role_requirement_id: roleRequirementId,
+    role_requirement_id:
+      typeof roleRequirementId == 'number' ? roleRequirementId : 0,
     cognito_sub,
   };
 
@@ -84,7 +85,7 @@ exports.handler = async (events, context, callback) => {
       user_id,
     };
   } else if (response.result.data.user[0].role == 'entrepreneur') {
-    if (response.result.data.team[0].user.role == 'student') {
+    if (response.result.data.team[0].creator.role == 'student') {
       if (!response.result.data.team[0].looking_for_mentors)
         return callback(null, {
           success: false,
@@ -100,7 +101,7 @@ exports.handler = async (events, context, callback) => {
         user_id,
       };
     } else {
-      if (!response.result.data.team[0].looking_members) {
+      if (!response.result.data.team[0].looking_for_members) {
         return callback(null, {
           success: false,
           errorCode: 'Forbidden',

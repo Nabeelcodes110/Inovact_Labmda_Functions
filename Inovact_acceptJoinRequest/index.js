@@ -1,6 +1,12 @@
 const { query: Hasura } = require('./utils/hasura');
-const { checkIfPossibleToAccept, getRoleRequirement } = require('./queries/queries');
-const { acceptJoinRequest } = require('./queries/mutations');
+const {
+  checkIfPossibleToAccept,
+  getRoleRequirement,
+} = require('./queries/queries');
+const {
+  acceptJoinRequest1,
+  acceptJoinRequest2,
+} = require('./queries/mutations');
 
 exports.handler = async (events, context, callback) => {
   const request_id = events.request_id;
@@ -40,24 +46,40 @@ exports.handler = async (events, context, callback) => {
       data: null,
     });
 
-  const response2 = await Hasura(getRoleRequirement, { roleRequirementId: response1.result.data.team_requests[0].role_requirement_id })
-
-  if (!response2.success) return callback(null, {
-    success: false,
-    errorCode: "InternalServerError",
-    errorMessage: "Failed to get role requirement details",
-    data: null
-  })
-
-  const variables2 = {
+  let query;
+  let variables2 = {
     team_id: response1.result.data.team_requests[0].team_id,
     user_id: response1.result.data.team_requests[0].user_id,
-    role: response2.result.data.team_role_requirements[0].role_name,
-    role_requirement_id: response1.result.data.team_requests[0].role_requirement_id,
     request_id,
   };
 
-  const response3 = await Hasura(acceptJoinRequest, variables2);
+  if (response1.result.data.team_requests[0].role_requirement_id != null) {
+    const response2 = await Hasura(getRoleRequirement, {
+      roleRequirementId:
+        response1.result.data.team_requests[0].role_requirement_id,
+    });
+
+    if (!response2.success)
+      return callback(null, {
+        success: false,
+        errorCode: 'InternalServerError',
+        errorMessage: 'Failed to get role requirement details',
+        data: null,
+      });
+
+    variables2['role'] =
+      response2.result.data.team_role_requirements[0].role_name;
+    variables2['role_requirement_id'] =
+      response1.result.data.team_requests[0].role_requirement_id;
+
+    query = acceptJoinRequest1;
+  } else {
+    variables2['role'] = 'mentor';
+
+    query = acceptJoinRequest2;
+  }
+
+  const response3 = await Hasura(query, variables2);
 
   if (!response3.success)
     return callback(null, {

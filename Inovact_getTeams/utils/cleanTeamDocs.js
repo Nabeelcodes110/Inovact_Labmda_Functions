@@ -22,7 +22,9 @@ function cleanTeamDocs(teamDoc) {
     temp.id = team_request.id;
     temp.user = team_request.user;
     temp.requested_on = team_request.requested_on;
-    temp.required_role = team_request.team_role_requirement.role_name;
+    temp.required_role = team_request.team_role_requirement
+      ? team_request.team_role_requirement.role_name
+      : 'mentor';
 
     return temp;
   });
