@@ -1,5 +1,5 @@
 const getIdeas = `query getIdeas($cognito_sub: String) {
-    idea {
+    idea(order_by: {created_at:desc}) {
       id
       title
       description
@@ -121,5 +121,5 @@ const getConnections = `query getConnections($cognito_sub: String) {
 module.exports = {
   getIdea,
   getIdeas,
-  getConnections
+  getConnections,
 };
