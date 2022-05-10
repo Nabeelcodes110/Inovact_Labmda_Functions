@@ -1,7 +1,7 @@
 const {
   updateUser,
   addUserSkills,
-  addUserInterests,
+  updateUserInterests,
 } = require('./queries/mutations');
 const { getUser } = require('./queries/queries');
 const cleanUserdoc = require('./utils/cleanUserDoc');
@@ -86,18 +86,26 @@ exports.handler = async (events, context, callback) => {
 
   // Insert interests
   if (events.user_interests instanceof Array) {
-    const user_interests_with_user_id = events.user_interests.map(ele => {
+    const interests = events.user_interests.map(interest => {
       return {
-        interest_id: ele.id,
+        area_of_interest: {
+          data: {
+            interest: interest.toLowerCase(),
+          },
+          on_conflict: {
+            constraint: 'area_of_interests_interest_key',
+            update_columns: 'interest',
+          },
+        },
         user_id: response1.result.data.update_user.returning[0].id,
       };
     });
 
     const variables = {
-      objects: user_interests_with_user_id,
+      objects: interests,
     };
 
-    await Hasura(addUserInterests, variables);
+    await Hasura(updateUserInterests, variables);
   }
 
   const response2 = await Hasura(getUser, {

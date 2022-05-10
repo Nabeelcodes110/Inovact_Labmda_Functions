@@ -36,16 +36,17 @@ const addUserSkills = `mutation addUserSkills($objects: [user_skills_insert_inpu
   }
 }`;
 
-const addUserInterests = `mutation addUserInterests($objects: [user_interests_insert_input!]!) {
-  insert_user_interests(objects: $objects, on_conflict: {constraint: user_interests_pkey, update_columns: user_id}) {
-    returning {
-      interest_id
-    }
+const updateUserInterests = `mutation updateUserInterests($objects: [user_interests_insert_input!]!) {
+  delete_user_interests(where: {user: {cognito_sub: {_eq: $cognito_sub}}}) {
+    affected_rows
+  }
+  insert_user_interests(objects: $objects) {
+    affected_rows
   }
 }`;
 
 module.exports = {
   updateUser,
   addUserSkills,
-  addUserInterests,
+  updateUserInterests,
 };
