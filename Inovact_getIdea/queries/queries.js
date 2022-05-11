@@ -45,6 +45,9 @@ const getIdeas = `query getIdeas($cognito_sub: String) {
         id
         looking_for_members
         looking_for_mentors
+        team_requests(where: {user: {cognito_sub: {_eq: $cognito_sub}}}) {
+          requested_on
+        }
       }
     }
   }
@@ -95,6 +98,9 @@ const getIdea = `query getIdea($id: Int, $cognito_sub: String) {
         id
         looking_for_members
         looking_for_mentors
+        team_requests(where: {user: {cognito_sub: {_eq: $cognito_sub}}}) {
+          requested_on
+        }
       }
       created_at
       updated_at
