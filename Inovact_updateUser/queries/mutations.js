@@ -36,7 +36,7 @@ const addUserSkills = `mutation addUserSkills($objects: [user_skills_insert_inpu
   }
 }`;
 
-const updateUserInterests = `mutation updateUserInterests($objects: [user_interests_insert_input!]!) {
+const updateUserInterests = `mutation updateUserInterests($objects: [user_interests_insert_input!]!, $cognito_sub: String) {
   delete_user_interests(where: {user: {cognito_sub: {_eq: $cognito_sub}}}) {
     affected_rows
   }

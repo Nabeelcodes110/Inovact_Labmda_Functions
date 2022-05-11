@@ -65,7 +65,7 @@ exports.handler = async (events, context, callback) => {
     return callback(null, {
       success: false,
       errorCode: 'InternalServerError',
-      errorMessage: 'Failed due to unknows reason',
+      errorMessage: JSON.stringify(response1.errors),
     });
 
   // Insert skills
@@ -86,11 +86,11 @@ exports.handler = async (events, context, callback) => {
 
   // Insert interests
   if (events.user_interests instanceof Array) {
-    const interests = events.user_interests.map(interest => {
+    const interests = events.user_interests.map(ele => {
       return {
         area_of_interest: {
           data: {
-            interest: interest.toLowerCase(),
+            interest: ele.interest.toLowerCase(),
           },
           on_conflict: {
             constraint: 'area_of_interests_interest_key',
@@ -103,6 +103,7 @@ exports.handler = async (events, context, callback) => {
 
     const variables = {
       objects: interests,
+      cognito_sub,
     };
 
     await Hasura(updateUserInterests, variables);
