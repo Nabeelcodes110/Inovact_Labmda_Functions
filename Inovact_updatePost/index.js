@@ -14,6 +14,7 @@ exports.handler = async (events, context, callback) => {
   if (events.description)
     variables['changes']['description'] = events.description;
   if (events.title) variables['changes']['title'] = events.title;
+  if (events.link) variables['changes']['link'] = events.link;
 
   const response = await Hasura(updatePost_query, variables);
 

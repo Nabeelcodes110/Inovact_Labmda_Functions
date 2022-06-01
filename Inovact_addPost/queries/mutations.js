@@ -1,5 +1,5 @@
-const addProject = `mutation add_project($description: String!, $title: String!, $user_id: Int, $status: String, $team_id: Int, $completed: Boolean) {
-  insert_project(objects: [{title: $title, description: $description, user_id: $user_id, status: $status, team_id: $team_id, completed: $completed}]) {
+const addProject = `mutation add_project($description: String!, $title: String!, $user_id: Int, $status: String, $team_id: Int, $completed: Boolean, $link: String) {
+  insert_project(objects: [{title: $title, description: $description, user_id: $user_id, status: $status, team_id: $team_id, completed: $completed, link: $link}]) {
     returning {
       id
       title
@@ -32,6 +32,7 @@ const addProject = `mutation add_project($description: String!, $title: String!,
       status
       team_id
       completed
+      link
       created_at
       updated_at
       user {

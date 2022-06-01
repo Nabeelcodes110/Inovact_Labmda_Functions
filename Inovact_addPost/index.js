@@ -33,6 +33,7 @@ exports.handler = async (events, context, callback) => {
     user_id: response1.result.data.user[0].id,
     status: events.status,
     completed: events.completed,
+    link: events.link,
   };
 
   let teamCreated;
