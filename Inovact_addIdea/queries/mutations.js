@@ -1,9 +1,11 @@
-const addIdea = `mutation add_idea($description: String!, $title:String!, $user_id:Int, $team_id: Int) {
+const addIdea = `mutation add_idea($description: String!, $title:String!, $user_id:Int, $team_id: Int, $status: String, $link: String) {
   insert_idea(objects: [{
     description: $description,
     user_id: $user_id,
 		title:$title,
-    team_id: $team_id
+    team_id: $team_id,
+    status: $status,
+    link: $link
   }]) {
     returning {
       id,
@@ -13,6 +15,8 @@ const addIdea = `mutation add_idea($description: String!, $title:String!, $user_
       created_at
       updated_at
       team_id
+      link
+      status
       user {
         id
         avatar

@@ -24,10 +24,15 @@ exports.handler = async (events, context, callback) => {
       errorMessage: 'Failed to find login user',
     });
 
+  const allowed_statuses = ['ideation', 'mvp/prototype', 'traction'];
+
   let ideaData = {
     description: events.description,
     title: events.title,
     user_id: response1.result.data.user[0].id,
+    status:
+      allowed_statuses.indexOf(events.status) > -1 ? events.status : 'ideation',
+    link: events.link ? events.link : '',
   };
 
   let teamCreated;
@@ -59,7 +64,7 @@ exports.handler = async (events, context, callback) => {
     return callback(null, {
       success: false,
       errorCode: 'InternalServerError',
-      errorMessage: 'Failed to save idea',
+      errorMessage: JSON.stringify(response2.errors),
     });
 
   role_if: if (ideaData.team_id && events.roles_required.length > 0) {

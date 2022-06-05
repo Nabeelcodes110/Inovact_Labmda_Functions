@@ -9,10 +9,15 @@ exports.handler = async (events, context, callback) => {
     changes: {},
   };
 
+  const allowed_statuses = ['ideation', 'mvp/prototype', 'traction'];
+
   if (events.caption) variables['changes']['caption'] = events.caption;
   if (events.description)
     variables['changes']['description'] = events.description;
   if (events.title) variables['changes']['title'] = events.title;
+  if (events.status && allowed_statuses.indexOf(events.status) > -1)
+    variables['changes']['status'] = events.status;
+  if (events.link) variables['changes']['link'] = events.link;
 
   const response = await Hasura(updateIdea_query, variables);
 
@@ -28,7 +33,7 @@ exports.handler = async (events, context, callback) => {
       success: false,
       errorCode: 'InternalServerError',
       errorMessage: 'Failed to update idea',
-      data: null,
+      data: JSON.stringify(response.errors),
     });
   }
 };
