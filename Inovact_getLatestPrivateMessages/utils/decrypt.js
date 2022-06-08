@@ -16,9 +16,9 @@ async function KMSDecrypter(data) {
   const keyring = new KmsKeyringNode({ generatorKeyId, keyIds });
 
   const context = {
-    stage: 'demo',
-    purpose: 'simple demonstration app',
-    origin: 'ap-south-1',
+    stage: process.env.NODE_ENV,
+    purpose: process.env.KMS_CONTEXT_PURPOSE,
+    origin: process.env.KMS_REGION,
   };
 
   const { plaintext, messageHeader } = await decrypt(keyring, data);
@@ -30,7 +30,7 @@ async function KMSDecrypter(data) {
       throw new Error('Encryption Context does not match expected values');
   });
 
-  return plaintext;
+  return plaintext.toString();
 }
 
 module.exports = {

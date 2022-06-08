@@ -30,28 +30,16 @@ exports.handler = async (events, context, callback) => {
       data: null,
     });
 
-  const response2 = await Hasura(getUserId, {
-    cognito_sub: { _eq: cognito_sub },
-  });
-
-  if (!response2.success)
-    return callback(null, {
-      success: false,
-      errorCode: 'IntenalServerError',
-      errorMessage: 'Failed to get user id',
-      data: null,
-    });
-
   // Encrypt the message text
-  const encryptedMessage = await encrypt(message);
+  const encryptedMessageBuffer = await encrypt(message);
 
-  // Convert it to hex string
-  const encryptedMessageHex = encryptedMessage.toString('hex');
+  // Convert it to a string supported by Postgres for column type of bytea  (Byte Array)
+  const encryptedMessageString = '\\x' + encryptedMessageBuffer.toString('hex');
 
   // Send the message
   const variables2 = {
-    primary_user_id: response2.result.data.user[0].id,
-    encrypted_message: encryptedMessageHex,
+    primary_user_id: response1.result.data.user[0].id,
+    encrypted_message: encryptedMessageString,
     secondary_user_id: user_id,
   };
 

@@ -4,16 +4,11 @@ const getConnectionDetails = `query getConnectionDetails($user_id: Int, $cognito
       count
     }
   }
-}`;
-
-const getUserId = `query getUser($cognito_sub: String_comparison_exp) {
-  user(where: { cognito_sub: $cognito_sub }) {
+  user(where: { cognito_sub: { _eq: $cognito_sub }}) {
     id
   }
-}
-`;
+}`;
 
 module.exports = {
   getConnectionDetails,
-  getUserId,
 };
