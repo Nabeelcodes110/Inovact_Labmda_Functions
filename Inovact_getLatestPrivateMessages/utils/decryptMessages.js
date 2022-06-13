@@ -13,8 +13,8 @@ async function decryptMessages(messageDocs) {
 
     decryptedMessages.push({
       id: messageDocs[i].id,
-      primary_user_id: messageDocs[i].primary_user_id,
-      secondary_user_id: messageDocs[i].secondary_user_id,
+      sender: messageDocs[i].sender,
+      receiver: messageDocs[i].receiver,
       message: decryptedMessage,
       created_at: messageDocs[i].created_at,
     });
