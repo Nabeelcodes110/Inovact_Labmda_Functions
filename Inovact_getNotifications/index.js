@@ -1,18 +1,26 @@
 const { query: Hasura } = require('./utils/hasura');
-const { userNotifications } = require('./queries/queries');
+const { getNotifications } = require('./queries/queries');
 
 exports.handler = async (events, context, callback) => {
   const { cognito_sub } = events;
 
-  const oneDayBeforeNow = new Date();
-  oneDayBeforeNow.setDate(oneDayBeforeNow.getDate() - 1);
+  const response = await Hasura(getNotifications, { cognito_sub });
 
-  const response = await Hasura(userNotifications, {
-    cognito_sub,
-    yesterday: oneDayBeforeNow,
+  if (!response.success) {
+    return callback(null, {
+      success: false,
+      errorCode: 'InternalServerError',
+      errorMessage: 'Failed to fetch notifications',
+      data: null,
+    });
+  }
+
+  // const notifications = prepareNotifications(response.result.data.notification);
+
+  callback(null, {
+    success: true,
+    errorCode: '',
+    errorMessage: '',
+    data: response.result.data.notification,
   });
-
-  if (!response.success) return callback(null, response.errors);
-
-  callback(null, response.result);
 };
