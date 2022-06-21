@@ -1,5 +1,6 @@
 const { query: Hasura } = require('./utils/hasura');
 const { getNotifications } = require('./queries/queries');
+const cleanNotificationDoc = require('./utils/cleanNotificationDoc');
 
 exports.handler = async (events, context, callback) => {
   const { cognito_sub } = events;
@@ -15,12 +16,13 @@ exports.handler = async (events, context, callback) => {
     });
   }
 
-  // const notifications = prepareNotifications(response.result.data.notification);
+  const notifications =
+    response.result.data.notification.map(cleanNotificationDoc);
 
   callback(null, {
     success: true,
     errorCode: '',
     errorMessage: '',
-    data: response.result.data.notification,
+    data: notifications,
   });
 };
