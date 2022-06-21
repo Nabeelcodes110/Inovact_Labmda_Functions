@@ -1,37 +1,38 @@
 const { query: Hasura } = require('./utils/hasura');
-const { addNotificationObject } = require('./queries/mutations');
+const { addNotifications } = require('./queries/mutations');
 
 exports.handler = async (event, context) => {
-  const entityTypeId = event.eventTypeId;
-  const entityId = event.entityId;
-  const actorId = event.actorId;
-  const notifierIds = event.notifierIds;
+  const records = event.Records;
+  let objects = [];
 
-  const response1 = await Hasura(addNotificationObject, {
-    entityId,
-    entityTypeId,
-  });
+  for (let i = 0; i < records.length; i++) {
+    const record = records[i];
+    const payload = JSON.parse(record.body);
 
-  if (!response1.success) {
-    return;
+    objects.push({
+      entity_id: payload.entityId,
+      entity_type_id: payload.entityTypeId,
+      notification_changes: {
+        data: [
+          {
+            actor_id: payload.actorId,
+          },
+        ],
+      },
+      notifications: {
+        data: payload.notifierIds.map(notifierId => ({
+          notifier_id: notifierId,
+        })),
+      },
+    });
   }
 
-  const notificationChange = {
-    notification_object_id:
-      response1.result.data.insert_notification_object.returning[0].id,
-    actor_id: actorId,
-  };
+  const response = await Hasura(addNotifications, { objects });
 
-  const notifications = notifierIds.map(notifierId => ({
-    notification_object_id:
-      response1.result.data.insert_notification_object.returning[0].id,
-    notifier_id: notifierId,
-  }));
+  if (!response.success) {
+    console.log(response.errors);
+    // TODO: handle error
+  }
 
-  const variables = {
-    notificationChanges: [notificationChange],
-    notifications,
-  };
-
-  const response2 = await Hasura(addNotificationObject, variables);
+  return;
 };

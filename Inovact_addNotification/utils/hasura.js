@@ -1,16 +1,8 @@
-const axios = require('axios');
+const axios = require('./axios');
+
 async function query(query, variables = {}) {
   const result = await axios
-    .post(
-      process.env.HASURA_API,
-      { query, variables },
-      {
-        headers: {
-          'content-type': 'application/json',
-          'x-hasura-admin-secret': process.env.HASURA_ADMIN_SECRET,
-        },
-      }
-    )
+    .post(null, { query, variables })
     .then(response => {
       const responseData = response.data;
 
