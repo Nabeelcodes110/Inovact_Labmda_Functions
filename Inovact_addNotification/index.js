@@ -31,7 +31,7 @@ exports.handler = async (event, context) => {
 
   if (!response.success) {
     console.log(response.errors);
-    // TODO: handle error
+    throw new Error('Failed to add notifications. Check logs for details.');
   }
 
   return;

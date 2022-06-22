@@ -1,13 +1,12 @@
 const axios = require('axios');
-const config = require('../config/config');
 const http = require('http');
 const https = require('https');
 
 const instance = axios.create({
-  baseURL: config.hasuraApi,
+  baseURL: process.env.HASURA_API,
   headers: {
     'content-type': 'application/json',
-    'x-hasura-admin-secret': config.hasuraAdminSecret,
+    'x-hasura-admin-secret': process.env.HASURA_ADMIN_SECRET,
   },
   httpAgent: new http.Agent({
     keepAlive: true,
