@@ -3,6 +3,9 @@ const { addNotifications } = require('./queries/mutations');
 
 exports.handler = async (event, context) => {
   const records = event.Records;
+
+  if (records.length === 0) return;
+
   let objects = [];
 
   for (let i = 0; i < records.length; i++) {
