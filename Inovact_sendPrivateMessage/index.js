@@ -22,7 +22,7 @@ exports.handler = async (events, context, callback) => {
       data: null,
     });
 
-  if (response1.result.data.connections_aggregate.aggregate.count === 0)
+  if (response1.result.data.connections.length === 0)
     return callback(null, {
       success: false,
       errorCode: 'UserNotConnected',
@@ -41,6 +41,7 @@ exports.handler = async (events, context, callback) => {
     primary_user_id: response1.result.data.user[0].id,
     encrypted_message: encryptedMessageString,
     secondary_user_id: user_id,
+    connection_id: response1.result.data.connections[0].id,
   };
 
   const response3 = await Hasura(sendMessage, variables2);
