@@ -6,6 +6,7 @@ const {
   addTeamRequestByEntrepreneurAsMember,
   addTeamRequestByEntrepreneurAsMentor,
 } = require('./queries/mutations');
+const notify = require('./utils/notify');
 
 exports.handler = async (events, context, callback) => {
   const team_id = events.team_id;
@@ -144,6 +145,14 @@ exports.handler = async (events, context, callback) => {
       errorMessage: JSON.stringify(response1.errors),
       data: null,
     });
+
+  // Notify the user
+  await notify(
+    23,
+    team_id,
+    user_id,
+    response.result.data.notifier_ids.map(x => x.user_id)
+  ).catch(console.log);
 
   callback(null, {
     success: true,

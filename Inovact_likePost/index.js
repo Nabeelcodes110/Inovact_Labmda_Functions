@@ -1,6 +1,6 @@
 const { add_likePost, delete_like } = require('./queries/mutations');
 const { getUserId, getPostId } = require('./queries/queries');
-
+const notify = require('./utils/notify');
 const { query: Hasura } = require('./utils/hasura');
 
 exports.handler = async (events, context, callback) => {
@@ -40,6 +40,11 @@ exports.handler = async (events, context, callback) => {
         errorMessage: 'Failed to like the post',
       });
 
+    // Notify the user
+    await notify(1, events.project_id, response1.result.data.user[0].id, [
+      response.result.data.project[0].user_id,
+    ]).catch(console.log);
+
     callback(null, {
       success: true,
       errorCode: '',
@@ -49,7 +54,7 @@ exports.handler = async (events, context, callback) => {
   } else {
     const response3 = await Hasura(delete_like, variable);
 
-    if (!response1.success)
+    if (!response3.success)
       return callback(null, {
         success: false,
         errorCode: 'InternalServerError',

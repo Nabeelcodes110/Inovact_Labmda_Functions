@@ -10,11 +10,12 @@ const getideaId = `query  getIdeaLike($idea_id: Int, $user_id: Int) {
     idea_id
     user_id
   }
+  idea(where: {id: {_eq: $idea_id}}) {
+    user_id
+  }
 }
 `;
 module.exports = {
-
   getUserId,
-  getideaId
- 
-}
+  getideaId,
+};

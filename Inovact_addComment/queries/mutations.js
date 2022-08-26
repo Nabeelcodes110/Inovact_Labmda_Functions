@@ -4,6 +4,9 @@ const commentOnPost = `mutation commentOnPost($text: String, $user_id: Int, $pos
       id
       user_id
       project_id
+      project {
+        user_id
+      }
       text
       created_at
       updated_at
@@ -17,6 +20,9 @@ const commentOnIdea = `mutation commentOnIdea($text: String, $user_id: Int, $ide
       id
       user_id
       idea_id
+      idea {
+        user_id
+      }
       text
       created_at
       updated_at
@@ -30,6 +36,9 @@ const commentOnThought = `mutation commentOnThought($text: String, $user_id: Int
       id
       user_id
       thought_id
+   		thought {
+        user_id
+      }   
       text
       created_at
       updated_at

@@ -10,6 +10,9 @@ const getThoughtId = `query  getThoughtLike($thought_id: Int, $user_id: Int) {
     thought_id
     user_id
   }
+  thoughts(where: {id: {_eq: $thought_id}}) {
+    user_id
+  }
 }
 `;
 

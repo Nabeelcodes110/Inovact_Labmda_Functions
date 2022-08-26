@@ -1,6 +1,7 @@
 const { query: Hasura } = require('./utils/hasura');
 const { add_TeamDocument } = require('./queries/mutations');
 const { checkIfAdmin } = require('./queries/queries');
+const notify = require('./utils/notify');
 
 exports.handler = async (events, context, callback) => {
   // Check if current user is team admin
@@ -18,8 +19,8 @@ exports.handler = async (events, context, callback) => {
   }
 
   if (
-    response1.result.data.team_members.length == 0 ||
-    !response1.result.data.team_members[0].admin
+    response1.result.data.current_user.length == 0 ||
+    !response1.result.data.current_user[0].admin
   )
     return callback(null, {
       success: false,
@@ -44,6 +45,18 @@ exports.handler = async (events, context, callback) => {
       data: null,
     };
   }
+
+  const user_id = response1.result.data.current_user[0].user_id;
+
+  // Notify the user
+  await notify(
+    22,
+    events.team_id,
+    user_id,
+    response1.result.data.team_members
+      .map(team_member => team_member.user_id)
+      .filter(id => id != user_id)
+  ).catch(console.log);
 
   callback(null, {
     success: true,

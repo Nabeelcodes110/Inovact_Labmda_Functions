@@ -20,6 +20,9 @@ const possibleToJoinTeam = `query joinTeam($team_id: Int, $cognito_sub: String, 
     id
     role
   }
+  notifier_ids: team_members(where: {team_id: {_eq: $team_id}, admin: {_eq: true}}) {
+    user_id
+  }
 }`;
 
 module.exports = {

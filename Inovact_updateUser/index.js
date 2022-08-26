@@ -23,6 +23,7 @@ exports.handler = async (events, context, callback) => {
   if (events.first_name) variables['changes']['first_name'] = events.first_name;
   if (events.last_name) variables['changes']['last_name'] = events.last_name;
   if (events.bio) variables['changes']['bio'] = events.bio;
+  console.log(events.bio);
   if (events.avatar) variables['changes']['avatar'] = events.avatar;
   if (events.phone_number) {
     const unique = await checkUniquenessOfPhoneNumber(events.phone_number);

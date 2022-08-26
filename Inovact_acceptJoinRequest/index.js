@@ -7,6 +7,7 @@ const {
   acceptJoinRequest1,
   acceptJoinRequest2,
 } = require('./queries/mutations');
+const notify = require('./utils/notify');
 
 exports.handler = async (events, context, callback) => {
   const request_id = events.request_id;
@@ -88,6 +89,14 @@ exports.handler = async (events, context, callback) => {
       errorMessage: JSON.stringify(response3.errors),
       data: null,
     });
+
+  // Notify the user
+  await notify(
+    21,
+    response1.result.data.team_requests[0].team_id,
+    response1.result.data.team_members[0].user_id,
+    [response1.result.data.team_requests[0].user_id]
+  ).catch(console.log);
 
   callback(null, {
     success: true,

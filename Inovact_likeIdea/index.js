@@ -1,6 +1,6 @@
 const { add_likeIdea, delete_like } = require('./queries/mutations');
 const { getUserId, getideaId } = require('./queries/queries');
-
+const notify = require('./utils/notify');
 const { query: Hasura } = require('./utils/hasura');
 
 exports.handler = async (events, context, callback) => {
@@ -39,6 +39,11 @@ exports.handler = async (events, context, callback) => {
         errorCode: 'InternalServerError',
         errorMessage: 'Failed to like the thought',
       });
+
+    // Notify the user
+    await notify(6, events.idea_id, response1.result.data.user[0].id, [
+      response.result.data.idea[0].user_id,
+    ]).catch(console.log);
 
     callback(null, {
       success: true,
