@@ -1,9 +1,9 @@
 const { refreshAuthToken } = require('./utils/cognito');
 
 exports.handler = async (events, context, callback) => {
-  const { email, refreshToken } = events;
+  const { userName, refreshToken, clientId } = events;
 
-  const result = await refreshAuthToken(email, refreshToken).catch(err => {
+  const result = await refreshAuthToken(userName, refreshToken, clientId).catch(err => {
     return err;
   });
 
