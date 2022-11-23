@@ -19,6 +19,7 @@ const getCognitoUser = email =>
         resolve({
           hasRegistered: false,
           hasVerified: false,
+          userName: null,
         });
       } else {
         const emailVerifiedAttribute = Users[0].Attributes.find(
@@ -27,6 +28,7 @@ const getCognitoUser = email =>
 
         if (!emailVerifiedAttribute) {
           resolve({
+            userName: Users[0].Username,
             hasRegistered: false,
             hasVerified: false,
           });
@@ -34,11 +36,13 @@ const getCognitoUser = email =>
 
         if (emailVerifiedAttribute.Value == 'true') {
           resolve({
+            userName: Users[0].Username,
             hasRegistered: true,
             hasVerified: true,
           });
         } else {
           resolve({
+            userName: Users[0].Username,
             hasRegistered: true,
             hasVerified: false,
           });
@@ -53,10 +57,10 @@ const getCognitoUser = email =>
     }
   });
 
-const resendConfirmationEmail = email => {
+const resendConfirmationEmail = userName => {
   const params = {
     ClientId: process.env.COGNITO_CLIENT_ID,
-    Username: email,
+    Username: userName,
   };
 
   return identity.resendConfirmationCode(params).promise();

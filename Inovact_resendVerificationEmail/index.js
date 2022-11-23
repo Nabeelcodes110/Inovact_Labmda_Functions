@@ -1,7 +1,7 @@
 const { getCognitoUser, resendConfirmationEmail } = require('./utils/cognito');
 
 exports.handler = async (event, context, callback) => {
-  const { hasRegistered, hasVerified } = await getCognitoUser(
+  const { userName, hasRegistered, hasVerified } = await getCognitoUser(
     event.email
   ).catch(err => {
     return err;
@@ -20,11 +20,11 @@ exports.handler = async (event, context, callback) => {
       errorMessage: 'This email has already been verified',
     });
   } else {
-    const success = await resendConfirmationEmail(event.email).catch(err => {
-      // console.log(err)
+    const success = await resendConfirmationEmail(userName).catch(err => {
+      console.log(err);
       return false;
     });
-    console.log(success);
+
     if (success) {
       callback(null, {
         success: true,
