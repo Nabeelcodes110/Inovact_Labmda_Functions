@@ -35,10 +35,10 @@ const linkUsers = async (userPoolId, sourceUser, destinationUser) => {
     },
     UserPoolId: userPoolId,
   };
-  console.log(params);
+
   try {
     const data = await identity.adminLinkProviderForUser(params).promise();
-    console.log(data);
+
     return true;
   } catch (error) {
     console.log(error);
