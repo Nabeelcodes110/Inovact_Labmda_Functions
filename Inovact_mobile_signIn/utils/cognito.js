@@ -73,18 +73,7 @@ const getCognitoUser = email =>
           hasVerified: false,
         });
       } else {
-        const emailVerifiedAttribute = Users[0].Attributes.find(
-          e => e.Name == 'email_verified'
-        );
-
-        if (!emailVerifiedAttribute) {
-          resolve({
-            hasRegistered: false,
-            hasVerified: false,
-          });
-        }
-
-        if (emailVerifiedAttribute.Value == 'true') {
+        if (Users.find(user => user.UserStatus == 'CONFIRMED')) {
           resolve({
             hasRegistered: true,
             hasVerified: true,
@@ -92,7 +81,7 @@ const getCognitoUser = email =>
         } else {
           resolve({
             hasRegistered: true,
-            hasVerified: false,
+            hasVerified: true,
           });
         }
       }
