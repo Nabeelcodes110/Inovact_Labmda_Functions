@@ -13,15 +13,12 @@ exports.handler = async (event, context, callback) => {
     event.triggerSource == 'PreSignUp_AdminCreateUser'
   ) {
     if (users && users.length > 0) {
-      callback(
-        'An external provider accounts already exists for this email address',
-        null
-      );
+      callback('An account already exists for this email address', null);
     } else {
       callback(null, event);
     }
   }
-  // If social login link accounts if user already exists
+  // If social login, link accounts if user already exists
   else if (event.triggerSource === 'PreSignUp_ExternalProvider') {
     if (users && users.length == 0) return callback(null, event); // No user found, continue with signup
 
@@ -31,7 +28,7 @@ exports.handler = async (event, context, callback) => {
 
     const sourceUser = {
       ProviderAttributeName: 'Cognito_Subject',
-      ProviderAttributeValue: event.userName.split('_')[1], // @TODO - Correct this for linkedIn
+      ProviderAttributeValue: event.request.userAttributes['custom:oauth_sub'],
       ProviderName: getOfficialProviderName(event.userName.split('_')[0]),
     };
 
