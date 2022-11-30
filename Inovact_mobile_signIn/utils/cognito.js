@@ -81,7 +81,7 @@ const getCognitoUser = email =>
         } else {
           resolve({
             hasRegistered: true,
-            hasVerified: true,
+            hasVerified: false,
           });
         }
       }
