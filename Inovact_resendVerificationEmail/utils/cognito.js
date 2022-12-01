@@ -22,19 +22,7 @@ const getCognitoUser = email =>
           userName: null,
         });
       } else {
-        const emailVerifiedAttribute = Users[0].Attributes.find(
-          e => e.Name == 'email_verified'
-        );
-
-        if (!emailVerifiedAttribute) {
-          resolve({
-            userName: Users[0].Username,
-            hasRegistered: false,
-            hasVerified: false,
-          });
-        }
-
-        if (emailVerifiedAttribute.Value == 'true') {
+        if (Users.find(user => user.UserStatus == 'CONFIRMED')) {
           resolve({
             userName: Users[0].Username,
             hasRegistered: true,
