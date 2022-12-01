@@ -5,7 +5,7 @@ async function notify(message, users) {
     .post(
       'https://onesignal.com/api/v1/notifications',
       {
-        app_id: 'ONE_SIGNAL_APP_ID',
+        app_id: process.env.ONESIGNAL_APP_ID,
         contents: {
           en: message,
         },
@@ -15,7 +15,7 @@ async function notify(message, users) {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
-          Authorization: 'ONE_SIGNAL_API_KEY',
+          Authorization: 'Basic ' + process.env.ONESIGNAL_API_KEY,
         },
       }
     )
@@ -34,10 +34,12 @@ async function notify(message, users) {
         };
       }
     })
-    .catch(err => {
+    .catch(error => {
+      console.log(error.response.data.errors);
+
       return {
         success: false,
-        errors: err,
+        errors: error.response.data.errors,
       };
     });
 
