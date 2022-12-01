@@ -67,7 +67,7 @@ exports.handler = async (event, context) => {
 
   // Create a dictionary of actorId and actorName
   const actorNames = response1.result.data.user.reduce((acc, user) => {
-    acc[user.id] = user.first_name;
+    acc[user.id] = user.first_name + ' ' + user.last_name;
     return acc;
   }, {});
 
@@ -79,12 +79,10 @@ exports.handler = async (event, context) => {
 
     const response = await notify(
       notificationMessage,
-      object.notifications.data.map(notification => notification.notifier_id)
+      object.notifications.data
+        .map(notification => notification.notifier_id)
+        .map(String)
     );
-
-    console.log(response.success);
-    console.log(response.result);
-    console.log(response.errors);
   }
 
   return;
