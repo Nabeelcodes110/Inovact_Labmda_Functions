@@ -13,7 +13,7 @@ const mapping = {
 
   21: 'accepted your requested to join team',
   22: 'Document successfully uploaded',
-  23: 'send you a request to join team',
+  23: 'sent you a request to join team',
 };
 
 module.exports = mapping;
