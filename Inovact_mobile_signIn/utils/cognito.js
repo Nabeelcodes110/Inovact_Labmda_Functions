@@ -62,7 +62,6 @@ const getCognitoUser = email =>
       UserPoolId: process.env.USER_POOL_ID,
       AttributesToGet: null,
       Filter: `email = \"${email}\"`,
-      Limit: 1,
     };
     try {
       const { Users } = await identity.listUsers(userParams).promise();
