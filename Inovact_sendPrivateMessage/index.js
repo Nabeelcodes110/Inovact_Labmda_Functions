@@ -2,6 +2,7 @@ const { sendMessage } = require('./queries/mutations');
 const { getConnectionDetails, getUserId } = require('./queries/queries');
 const { query: Hasura } = require('./utils/hasura');
 const { KMSEncrypter: encrypt } = require('./utils/encrypt');
+const { notify } = require('./utils/oneSignal');
 
 exports.handler = async (events, context, callback) => {
   const { cognito_sub, user_id, message } = events;
@@ -53,6 +54,15 @@ exports.handler = async (events, context, callback) => {
       errorMessage: 'Failed to send message',
       data: null,
     });
+
+  // Notify the user
+  const actorName =
+    response1.result.data.user[0].first_name +
+    ' ' +
+    response1.result.data.user[0].last_name;
+
+  const notificationMessage = `${actorName} sent you a message`;
+  notify(notificationMessage, [String(user_id)]);
 
   return callback(null, {
     success: true,

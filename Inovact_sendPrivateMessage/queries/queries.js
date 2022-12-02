@@ -4,6 +4,8 @@ const getConnectionDetails = `query getConnectionDetails($user_id: Int, $cognito
   }
   user(where: { cognito_sub: { _eq: $cognito_sub }}) {
     id
+    first_name
+    last_name
   }
 }`;
 
