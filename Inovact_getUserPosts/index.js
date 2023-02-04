@@ -3,11 +3,11 @@ const { getUserId, getUserPosts } = require('./queries/queries');
 const cleanPostDoc = require('./utils/cleanPostDoc');
 
 exports.handler = async (events, context, callback) => {
-  let user_id = events.user_id;
+  let { user_id } = events;
 
   if (!user_id) {
     // Find user id
-    const cognito_sub = events.cognito_sub;
+    const { cognito_sub } = events;
     const response1 = await Hasura(getUserId, {
       cognito_sub: { _eq: cognito_sub },
     });
