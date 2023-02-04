@@ -3,15 +3,15 @@ const { getProjects, getProject, getConnections } = require('./queries/queries')
 const cleanPostDoc = require('./utils/cleanPostDoc');
 
 exports.handler = async (events, context, callback) => {
-  const id = await events.id;
+  const { id, cognito_sub } = events;
 
-  const response = await Hasura(getConnections, { cognito_sub: events.cognito_sub });
+  const response = await Hasura(getConnections, { cognito_sub });
 
   if (!response.success) {
     return callback(null, {
       success: false,
       errorCode: 'InternalServerError',
-      errorMessage: 'Failed to find login user',
+      errorMessage: JSON.stringify(response.errors),
       data: null,
     });
   }
@@ -19,7 +19,7 @@ exports.handler = async (events, context, callback) => {
   const userId = response.result.data.user[0].id;
 
   const connections = {};
-  response.result.data.connections.forEach(doc => {
+  response.result.data.connections.forEach((doc) => {
     if (doc.user1 === userId) {
       connections[doc.user2] = doc.status;
     } else {
@@ -30,7 +30,7 @@ exports.handler = async (events, context, callback) => {
   if (id) {
     const variables = {
       id,
-      cognito_sub: events.cognito_sub,
+      cognito_sub,
     };
 
     const response1 = await Hasura(getProject, variables);
@@ -42,7 +42,7 @@ exports.handler = async (events, context, callback) => {
         errorMessage: JSON.stringify(response1.errors),
         data: null,
       });
-    
+
     if (response1.result.data.project.length === 0) {
       return callback(null, {
         success: false,
@@ -52,35 +52,34 @@ exports.handler = async (events, context, callback) => {
       });
     }
 
-    const cleanedPosts = response1.result.data.project.map(doc => {
+    const cleanedPosts = response1.result.data.project.map((doc) => {
       doc = cleanPostDoc(doc);
-      doc.connections_status = connections[doc.user.id] ? connections[doc.user.id] : "not connected";
+      doc.connections_status = connections[doc.user.id] ? connections[doc.user.id] : 'not connected';
       return doc;
     });
 
     callback(null, cleanedPosts[0]);
   } else {
     const variables = {
-      cognito_sub: events.cognito_sub,
+      cognito_sub,
     };
 
-    const response = await Hasura(getProjects, variables);
+    const response1 = await Hasura(getProjects, variables);
 
-    if (response.success) {
-      const cleanedPosts = response.result.data.project.map(doc => {
-        doc = cleanPostDoc(doc);
-        doc.connections_status = connections[doc.user.id] ? connections[doc.user.id] : "not connected";
-        return doc;
-      });
-
-      callback(null, cleanedPosts);
-    } else {
-      callback(null, {
+    if (!response1.success)
+      return callback(nul, {
         success: false,
         errorCode: 'InternalServerError',
-        errorMessage: JSON.stringify(response.errors),
+        errorMessage: JSON.stringify(response1.errors),
         data: null,
       });
-    }
+
+    const cleanedPosts = response1.result.data.project.map((doc) => {
+      doc = cleanPostDoc(doc);
+      doc.connections_status = connections[doc.user.id] ? connections[doc.user.id] : 'not connected';
+      return doc;
+    });
+
+    callback(null, cleanedPosts);
   }
 };

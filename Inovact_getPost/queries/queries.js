@@ -3,6 +3,7 @@ const getProjects = `query getProjects($cognito_sub: String) {
     id
     title
     description
+    link
     project_tags {
       hashtag {
         name
@@ -61,9 +62,6 @@ const getProjects = `query getProjects($cognito_sub: String) {
       avatar
       looking_for_mentors
       looking_for_members
-      team_requests(where: {user: {cognito_sub: {_eq: $cognito_sub}}}) {
-        requested_on
-      }
       team_members {
         user {
           id
@@ -84,6 +82,7 @@ const getProject = `query getProject($id: Int, $cognito_sub: String) {
     id
     title
     description
+    link
     project_tags {
       hashtag {
         name
@@ -142,9 +141,6 @@ const getProject = `query getProject($id: Int, $cognito_sub: String) {
       avatar
       looking_for_mentors
       looking_for_members
-      team_requests(where: {user: {cognito_sub: {_eq: $cognito_sub}}}) {
-        requested_on
-      }
       team_members {
         user {
           id
@@ -178,7 +174,7 @@ const getConnections = `query getConnections($cognito_sub: String) {
 }`;
 
 module.exports = {
-  getProjects,
-  getProject,
-  getConnections,
+getProjects,
+getProject,
+getConnections,
 };
