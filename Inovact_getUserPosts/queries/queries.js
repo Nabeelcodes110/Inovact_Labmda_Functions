@@ -1,5 +1,5 @@
 const getUserPosts = `query getProjects($user_id: Int, $cognito_sub: String) {
-  project(where: { user_id: { _eq: $user_id }}) {
+  project(where: { user_id: { _eq: $user_id }}, order_by: { created_at: desc }) {
     id
     title
     description

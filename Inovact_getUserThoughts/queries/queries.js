@@ -1,5 +1,5 @@
 const getUserThoughts = `query getUserThoughts($user_id: Int, $cognito_sub: String) {
-  thoughts(where: {user_id: {_eq: $user_id}}) {
+  thoughts(where: {user_id: {_eq: $user_id}}, order_by: {created_at: desc}) {
     id
       thought
       user_id

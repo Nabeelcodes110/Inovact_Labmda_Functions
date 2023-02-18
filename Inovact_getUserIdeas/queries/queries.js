@@ -1,5 +1,5 @@
 const getUserIdeasById = `query getUserIdeasById($user_id: Int, $cognito_sub: String) {
-  idea(where: {user_id: {_eq: $user_id}}) {
+  idea(where: {user_id: {_eq: $user_id}}, order_by: {created_at: desc}) {
     id
     title
     description
