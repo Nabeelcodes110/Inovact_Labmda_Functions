@@ -1,7 +1,10 @@
 const axios = require('axios');
 const { query: Hasura } = require('./utils/hasura');
-const { addUserCause } = require('./queries/mutations');
-const { deleteUser: deleteUserQuery, getUserId } = require('./queries/queries');
+const {
+  deleteUser: deleteUserQuery,
+  addUserCause,
+} = require('./queries/mutations');
+const { getUserId } = require('./queries/queries');
 const { deleteUser: deleteCognitoUser } = require('./utils/cognito');
 const cron = require('node-cron');
 
@@ -13,11 +16,13 @@ exports.handler = async (events, context, callback) => {
     cognito_sub: { _eq: cognito_sub },
   });
 
+  console.log(response);
+
   if (!response.success) {
-    return res.json({
+    return callback(null, {
       success: false,
       errorCode: 'InternalServerError',
-      errorMessage: JSON.stringify(response1.errors),
+      errorMessage: 'Failed to delete Account',
       data: null,
     });
   }
@@ -30,21 +35,13 @@ exports.handler = async (events, context, callback) => {
     }
   );
 
-  if (!deleteUserResponse) {
-    return callback(null, {
-      success: false,
-      errorCode: 'InternalServerError',
-      errorMessage: 'Failed to delete Account',
-      data: null,
-    });
-  }
-
   const variables = {
     id,
     cause,
   };
 
   const response1 = await Hasura(addUserCause, variables);
+  console.log(response1);
 
   if (!response1.success) {
     return callback(null, {
@@ -55,7 +52,9 @@ exports.handler = async (events, context, callback) => {
     });
   }
 
-  const response2 = await Hasura(deleteUserQuery, { cognito_sub });
+  const response2 = await Hasura(deleteUserQuery, { id });
+
+  console.log(response2);
 
   if (!response2.success) {
     return callback(null, {

@@ -6,6 +6,13 @@ const addUserCause = `mutation addUserCause($id : Int , $cause : String!){
     }
 }`;
 
+const deleteUser = `mutation deleteUser($id: Int!) {
+    delete_user_by_pk( id: $id ){
+        id
+    }
+}`;
+
 module.exports = {
   addUserCause,
+  deleteUser,
 };
