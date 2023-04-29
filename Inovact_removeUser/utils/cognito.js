@@ -1,7 +1,12 @@
 var admin = require('firebase-admin');
 
 console.log(process.env.HASURA_API);
-var serviceAccount = JSON.parse(process.env.FIREBASE_ADMIN_CONFIG);
+firebaseConfiguration = JSON.parse(process.env.FIREBASE_ADMIN_CONFIG);
+firebaseConfiguration['private_key'] = process.env.FIREBASE_PRIVATE_KEY.replace(
+  /\\n/g,
+  '\n'
+);
+var serviceAccount = firebaseConfiguration;
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
